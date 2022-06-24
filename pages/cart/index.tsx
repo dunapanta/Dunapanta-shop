@@ -17,12 +17,13 @@ const CartPage = () => {
       pageDescription="Carrito de compras de la tienda"
     >
       <Typography variant="h1" component="h1">
-        <CardList />
+        Carrito
       </Typography>
 
       <Grid container>
         <Grid item xs={12} sm={7}>
           {/* Cart List */}
+          <CardList />
         </Grid>
         <Grid item xs={12} sm={5}>
           {/*  */}
