@@ -1,3 +1,4 @@
+import { FC } from "react";
 import NextLink from "next/link";
 import {
   Box,
@@ -17,7 +18,11 @@ const productsInCart = [
   initialData.products[2],
 ];
 
-export const CardList = () => {
+interface Props {
+  editable: boolean;
+}
+
+export const CardList: FC<Props> = ({ editable= false }) => {
   return (
     <>
       {productsInCart.map((product) => {
@@ -44,7 +49,11 @@ export const CardList = () => {
                   Talla: <strong>M</strong>
                 </Typography>
 
-                <ItemCounter />
+                {editable ? (
+                  <ItemCounter />
+                ) : (
+                  <Typography variant="h6">Cantidad: 1</Typography>
+                )}
               </Box>
             </Grid>
 
@@ -59,9 +68,11 @@ export const CardList = () => {
                 <strong>$ {product.price}</strong>
               </Typography>
 
-              <Button variant="text" color="secondary">
-                Remover
-              </Button>
+              {editable && (
+                <Button variant="text" color="secondary">
+                  Remover
+                </Button>
+              )}
             </Grid>
           </Grid>
         );
