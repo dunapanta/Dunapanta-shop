@@ -28,6 +28,10 @@
   background-color: #274494;
 }
 
+.form-input {
+  border-radius: 30px;
+  border: 2px solid #000000;
+}
 
 .summary-card {
   border: 1px solid rgba(0, 0, 0, 0.1);
