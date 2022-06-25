@@ -1,4 +1,5 @@
-import { Chip, Grid, Typography } from "@mui/material";
+import NextLink from "next/link";
+import { Button, Chip, Grid, Link, Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import { ShopLayout } from "components/layouts";
 
@@ -18,11 +19,24 @@ const columns: GridColDef[] = [
       );
     },
   },
+  {
+    field: "orderLink",
+    headerName: "Detalles de la compra",
+    width: 200,
+    sortable: false,
+    renderCell: (params: GridValueGetterParams) => {
+      return (
+        <NextLink href={`/orders/${params.row.id}`} passHref>
+          <Link underline="always">Detalle</Link>
+        </NextLink>
+      );
+    },
+  },
 ];
 
 const rows = [
-  { id: 1, paid: true, name: "John Doe" },
-  { id: 2, paid: false, name: "Jane Doe" },
+  { id: 1, paid: true, name: "John Doe", orderLink: "/orders/1" },
+  { id: 2, paid: false, name: "Jane Doe", orderLink: "/orders/2" },
 ];
 
 const HistoryPage = () => {
