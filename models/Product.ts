@@ -29,7 +29,7 @@ const productSchema = new Schema(
     gender: {
       type: String,
       enum: {
-        values: ["men", "women", "other"],
+        values: ["men", "women", "other", "kid"],
         message: "{VALUE} no está soportado",
       },
     },
