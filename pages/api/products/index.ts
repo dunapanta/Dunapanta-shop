@@ -18,8 +18,6 @@ export default function handler(
     default:
       return res.status(405).json({ message: "Method not allowed" });
   }
-
-  res.status(200).json({ message: "John Doe" });
 }
 
 const getProducts = async (req: NextApiRequest, res: NextApiResponse) => {
