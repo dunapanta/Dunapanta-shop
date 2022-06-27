@@ -19,7 +19,7 @@ const WomenPage: NextPage = () => {
         Mujeres
       </Typography>
       <Typography variant="h2" sx={{ mb: 1 }}>
-        Todos los productos
+        Productos para mujeres
       </Typography>
 
       {isLoading ? <FullScreenLoading /> : <ProductList products={products} />}

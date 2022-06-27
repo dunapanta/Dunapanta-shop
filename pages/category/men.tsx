@@ -17,7 +17,7 @@ const MenPage: NextPage = () => {
         Hombres
       </Typography>
       <Typography variant="h2" sx={{ mb: 1 }}>
-        Todos los productos
+        Productos para homnbres
       </Typography>
 
       {isLoading ? <FullScreenLoading /> : <ProductList products={products} />}
