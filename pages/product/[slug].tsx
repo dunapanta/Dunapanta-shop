@@ -1,4 +1,9 @@
-import { GetServerSideProps, NextPage } from "next";
+import {
+  GetServerSideProps,
+  GetStaticPaths,
+  GetStaticProps,
+  NextPage,
+} from "next";
 import { Box, Button, Chip, Grid, Typography } from "@mui/material";
 
 import { ShopLayout } from "components/layouts";
@@ -67,8 +72,39 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     </ShopLayout>
   );
 };
+// Option Server Side Rendering
+/* export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const { slug } = params as { slug: string };
+  const product = await dbProducts.getProductBySlug(slug);
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  if (!product) {
+    return {
+      redirect: {
+        destination: "/404",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      product,
+    },
+  };
+}; */
+
+// Option Static Generation
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const productsSlugs = await dbProducts.getAllProductSlugs();
+
+  return {
+    paths: productsSlugs.map(({ slug }) => ({ params: { slug } })),
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { slug } = params as { slug: string };
   const product = await dbProducts.getProductBySlug(slug);
 
