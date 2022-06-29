@@ -105,7 +105,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { slug } = params as { slug: string };
+  const { slug = "" } = params as { slug: string };
   const product = await dbProducts.getProductBySlug(slug);
 
   if (!product) {
@@ -121,6 +121,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     props: {
       product,
     },
+    //revalidate every week
+    revalidate: 60 * 60 * 24 * 7,
   };
 };
 
