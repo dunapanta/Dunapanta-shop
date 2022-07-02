@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useRouter } from "next/router";
 import {
   Box,
@@ -30,7 +30,16 @@ import { UiContext } from "context";
 
 export const SideMenu = () => {
   const { isMenuOpen, toggleSideMenu } = useContext(UiContext);
+
+  const [serachTerm, setSerachTerm] = useState("");
+
   const router = useRouter();
+
+  const onSearchTerm = () => {
+    if (serachTerm.trim().length === 0) return;
+    navigateTo(`/search/${serachTerm}`);
+  };
+
   const navigateTo = (url: string) => {
     router.push(url);
     toggleSideMenu();
@@ -46,11 +55,14 @@ export const SideMenu = () => {
         <List>
           <ListItem>
             <Input
+              value={serachTerm}
+              onChange={(e) => setSerachTerm(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && onSearchTerm()}
               type="text"
               placeholder="Buscar..."
               endAdornment={
                 <InputAdornment position="end">
-                  <IconButton aria-label="toggle password visibility">
+                  <IconButton onClick={onSearchTerm}>
                     <SearchOutlined />
                   </IconButton>
                 </InputAdornment>
