@@ -1,13 +1,18 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { Typography } from "@mui/material";
 
 import { ShopLayout } from "components/layouts";
 import { ProductList } from "components/products";
 import { useProducts } from "hooks";
 import { FullScreenLoading } from "components/ui";
+import { dbProducts } from "database";
+import { IProduct } from "interfaces";
 
-const SearchPage: NextPage = () => {
-  const { products, isLoading, isError } = useProducts("/products");
+interface Props {
+  products: IProduct[];
+}
+
+const SearchPage: NextPage<Props> = ({ products }) => {
   return (
     <ShopLayout
       title="Buscar Productos"
@@ -20,9 +25,32 @@ const SearchPage: NextPage = () => {
         Product Shirt 123
       </Typography>
 
-      {isLoading ? <FullScreenLoading /> : <ProductList products={products} />}
+      <ProductList products={products} />
     </ShopLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const { query = "" } = params as { query: string };
+
+  if (query.length === 0) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: true,
+      },
+    };
+  }
+
+  let products = await dbProducts.getProductsByQuery(query);
+
+  //TODO: Retornar otros productos si no hay resultados
+
+  return {
+    props: {
+      products,
+    },
+  };
 };
 
 export default SearchPage;
