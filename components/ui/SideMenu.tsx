@@ -35,6 +35,8 @@ export const SideMenu = () => {
 
   const router = useRouter();
 
+  let textFieldProps = { inputRef: textFieldInputFocused };
+
   const onSearchTerm = () => {
     if (serachTerm.trim().length === 0) return;
     navigateTo(`/search/${serachTerm}`);
@@ -44,6 +46,16 @@ export const SideMenu = () => {
     router.push(url);
     toggleSideMenu();
   };
+
+  function textFieldInputFocused(inputRef: any) {
+    if (inputRef && inputRef.node !== null) {
+      setTimeout(() => {
+        inputRef.focus();
+      }, 100);
+    }
+    return inputRef;
+  }
+
   return (
     <Drawer
       open={isMenuOpen}
@@ -55,6 +67,8 @@ export const SideMenu = () => {
         <List>
           <ListItem>
             <Input
+              //autoFocus
+              {...textFieldProps}
               value={serachTerm}
               onChange={(e) => setSerachTerm(e.target.value)}
               onKeyPress={(e) => e.key === "Enter" && onSearchTerm()}
