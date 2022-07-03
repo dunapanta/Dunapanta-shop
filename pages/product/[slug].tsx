@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   GetServerSideProps,
   GetStaticPaths,
@@ -10,7 +11,8 @@ import { ShopLayout } from "components/layouts";
 import { ProductSlideshow, SizeSelector } from "components/products";
 import { ItemCounter } from "components/ui";
 import { db, dbProducts } from "database";
-import { IProduct } from "interfaces";
+import { IProduct, ISize } from "interfaces";
+import { ICartProduct } from "context";
 
 interface Props {
   product: IProduct;
@@ -21,6 +23,24 @@ const ProductPage: NextPage<Props> = ({ product }) => {
   const { products: product, isLoading } = useProducts(
     `/products/${router.query.slug}`
   ); */
+
+  const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
+    _id: product._id,
+    quantity: 1,
+    images: product.images[0],
+    price: product.price,
+    size: undefined,
+    slug: product.slug,
+    title: product.title,
+    gender: product.gender,
+  });
+
+  const onSelectedSize = (size: ISize) => {
+    setTempCartProduct((currentProduct) => ({
+      ...currentProduct,
+      size,
+    }));
+  };
 
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
@@ -45,15 +65,18 @@ const ProductPage: NextPage<Props> = ({ product }) => {
               {/* Item Counter */}
               <ItemCounter />
               <SizeSelector
-                selectedSize={product.sizes[0]}
+                selectedSize={tempCartProduct.size}
                 sizes={product.sizes}
+                onSelectedSize={(size) => onSelectedSize(size)}
               />
             </Box>
 
             {/* Add to cart */}
             {product.inStock > 0 ? (
               <Button color="secondary" className="circular-btn">
-                Agregar al carrito
+                {tempCartProduct.size
+                  ? "Agregar al carrito"
+                  : "Seleccione una talla"}
               </Button>
             ) : (
               <Chip
