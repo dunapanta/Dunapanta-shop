@@ -1,29 +1,37 @@
 import type { GetServerSideProps, NextPage } from "next";
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import { ShopLayout } from "components/layouts";
 import { ProductList } from "components/products";
-import { useProducts } from "hooks";
-import { FullScreenLoading } from "components/ui";
 import { dbProducts } from "database";
 import { IProduct } from "interfaces";
 
 interface Props {
   products: IProduct[];
+  areThereProducts: boolean;
+  query: string;
 }
 
-const SearchPage: NextPage<Props> = ({ products }) => {
+const SearchPage: NextPage<Props> = ({ products, areThereProducts, query }) => {
   return (
     <ShopLayout
-      title="Buscar Productos"
-      pageDescription="Tus productos favoritos en un solo lugar"
+      title={`Busqueda: ${query} `}
+      pageDescription={`Productos encontrados para ${query}`}
     >
       <Typography variant="h1" component="h1">
         Buscar productos
       </Typography>
-      <Typography variant="h2" sx={{ mb: 1 }}>
-        Product Shirt 123
-      </Typography>
+      {areThereProducts ? (
+        <Typography variant="h2" sx={{ mb: 1 }}>
+          {`Productos encontrados para ${query}`}
+        </Typography>
+      ) : (
+        <Box display="flex">
+          <Typography variant="h2" sx={{ mb: 1 }}>
+            {`No se encontraton productos para ${query}`}
+          </Typography>
+        </Box>
+      )}
 
       <ProductList products={products} />
     </ShopLayout>
@@ -43,12 +51,18 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   }
 
   let products = await dbProducts.getProductsByQuery(query);
+  const areThereProducts = products.length > 0;
 
-  //TODO: Retornar otros productos si no hay resultados
+  //Retornar otros productos si no hay resultados
+  if (!areThereProducts) {
+    products = await dbProducts.getAllProducts();
+  }
 
   return {
     props: {
       products,
+      areThereProducts,
+      query,
     },
   };
 };
