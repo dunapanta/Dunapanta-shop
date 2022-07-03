@@ -42,6 +42,15 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     }));
   };
 
+  const onChangeQuantity = (quantity: number) => {
+    if (tempCartProduct.quantity === 1 && quantity < 1) return;
+    if (tempCartProduct.quantity === product.inStock && quantity === 1) return;
+    setTempCartProduct((currentProduct) => ({
+      ...currentProduct,
+      quantity: currentProduct.quantity + quantity,
+    }));
+  };
+
   return (
     <ShopLayout title={product.title} pageDescription={product.description}>
       <Grid container spacing={3}>
@@ -63,7 +72,10 @@ const ProductPage: NextPage<Props> = ({ product }) => {
             <Box sx={{ my: 2 }}>
               <Typography variant="subtitle2">Cantidad</Typography>
               {/* Item Counter */}
-              <ItemCounter />
+              <ItemCounter
+                quantity={tempCartProduct.quantity}
+                onChangeQuantity={(quantity) => onChangeQuantity(quantity)}
+              />
               <SizeSelector
                 selectedSize={tempCartProduct.size}
                 sizes={product.sizes}
