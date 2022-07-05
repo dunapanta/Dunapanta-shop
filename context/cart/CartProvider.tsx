@@ -1,4 +1,5 @@
-import { FC, useReducer } from "react";
+import { FC, useEffect, useReducer } from "react";
+import Cookie from "js-cookie";
 
 import { CartContext, cartReducer } from "./";
 import { ICartProduct } from "./CartContext";
@@ -12,11 +13,27 @@ export interface CartState {
 }
 
 const CartInitialState: CartState = {
-  cart: [],
+  cart: Cookie.get("cart") ? JSON.parse(Cookie.get("cart")!) : [],
 };
 
 export const CartProvider: FC<Props> = ({ children }: Props) => {
   const [state, dispatch] = useReducer(cartReducer, CartInitialState);
+
+   useEffect(() => {
+    let previousCartProducts = Cookie.get("cart")
+      ? JSON.parse(Cookie.get("cart")!)
+      : [];
+    if (previousCartProducts) {
+      dispatch({
+        type: "Cart - LoadCart from cookie | storage",
+        payload: previousCartProducts,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    Cookie.set("cart", JSON.stringify(state.cart));
+  }, [state.cart]);
 
   const addToCart = (product: ICartProduct) => {
     //regresa valor booleano
