@@ -14,6 +14,7 @@ export interface ICartProduct {
 
 export interface ContextCardProps {
   cart: ICartProduct[];
+  addToCart: (product: ICartProduct) => void;
 }
 
 export const CartContext = createContext({} as ContextCardProps);
