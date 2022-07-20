@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useContext } from "react";
 import NextLink from "next/link";
 import {
   Box,
@@ -9,31 +9,37 @@ import {
   Link,
   Typography,
 } from "@mui/material";
-import { initialData } from "database/products";
 import { ItemCounter } from "components/ui";
-
-const productsInCart = [
-  initialData.products[0],
-  initialData.products[1],
-  initialData.products[2],
-];
+import { IProduct } from "interfaces";
+import { CartContext, ICartProduct } from "context";
 
 interface Props {
   editable?: boolean;
 }
 
-export const CardList: FC<Props> = ({ editable= false }) => {
+export const CardList: FC<Props> = ({ editable = false }) => {
+  const { cart } = useContext(CartContext);
+
+  const onChangeQuantity = (product: ICartProduct, quantity: number) => {
+    let maxItemsValue = 3;
+    //if (maxItemsValue === 0) return;
+    if (product.quantity === 1 && quantity < 1) return;
+    if (product.quantity === maxItemsValue && quantity === 1) return;
+
+    product.quantity += quantity;
+  };
   return (
     <>
-      {productsInCart.map((product) => {
+      {cart.map((product) => {
+        console.log("P:",product);
         return (
-          <Grid spacing={2} sx={{ mb: 1 }} key={product.slug} container>
+          <Grid spacing={2} sx={{ mb: 1 }} key={product.slug + product.size} container>
             <Grid item xs={3}>
-              <NextLink href="/product/slug">
+              <NextLink href={`/product/${product.slug}`}>
                 <Link>
                   <CardActionArea>
                     <CardMedia
-                      image={`/products/${product.images[0]}`}
+                      image={`/products/${product.images}`}
                       component="img"
                       sx={{ borderRadius: "5px" }}
                     />
@@ -50,9 +56,16 @@ export const CardList: FC<Props> = ({ editable= false }) => {
                 </Typography>
 
                 {editable ? (
-                  <ItemCounter />
+                  <ItemCounter
+                    quantity={product.quantity}
+                    onChangeQuantity={(quantity) =>
+                      onChangeQuantity(product, quantity)
+                    }
+                  />
                 ) : (
-                  <Typography variant="h6">Cantidad: 1</Typography>
+                  <Typography variant="h6">
+                    Cantidad: {product.quantity}
+                  </Typography>
                 )}
               </Box>
             </Grid>

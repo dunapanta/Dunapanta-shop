@@ -19,20 +19,27 @@ const CartInitialState: CartState = {
 export const CartProvider: FC<Props> = ({ children }: Props) => {
   const [state, dispatch] = useReducer(cartReducer, CartInitialState);
 
-   useEffect(() => {
-    let previousCartProducts = Cookie.get("cart")
-      ? JSON.parse(Cookie.get("cart")!)
-      : [];
-    if (previousCartProducts) {
+  useEffect(() => {
+    try {
+      let previousCartProducts = Cookie.get("cart")
+        ? JSON.parse(Cookie.get("cart")!)
+        : [];
+      if (previousCartProducts) {
+        dispatch({
+          type: "Cart - LoadCart from cookie | storage",
+          payload: previousCartProducts,
+        });
+      }
+    } catch (e) {
       dispatch({
         type: "Cart - LoadCart from cookie | storage",
-        payload: previousCartProducts,
+        payload: [],
       });
     }
   }, []);
 
   useEffect(() => {
-    Cookie.set("cart", JSON.stringify(state.cart));
+    if(state.cart.length > 0) Cookie.set("cart", JSON.stringify(state.cart));
   }, [state.cart]);
 
   const addToCart = (product: ICartProduct) => {
