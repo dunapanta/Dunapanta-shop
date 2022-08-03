@@ -9,7 +9,7 @@ import {
   Link,
   Typography,
 } from "@mui/material";
-import { ItemCounter } from "components/ui";
+import { ItemCounterR } from "components/ui";
 import { IProduct } from "interfaces";
 import { CartContext, ICartProduct } from "context";
 
@@ -18,7 +18,15 @@ interface Props {
 }
 
 export const CardList: FC<Props> = ({ editable = false }) => {
-  const { cart } = useContext(CartContext);
+  const { cart, updateCartQuantity } = useContext(CartContext);
+
+  const onNewCartQuantityValue = (
+    product: ICartProduct,
+    newQuantityValue: number
+  ) => {
+    product.quantity = newQuantityValue;
+    updateCartQuantity(product);
+  };
 
   const onChangeQuantity = (product: ICartProduct, quantity: number) => {
     let maxItemsValue = 3;
@@ -31,9 +39,13 @@ export const CardList: FC<Props> = ({ editable = false }) => {
   return (
     <>
       {cart.map((product) => {
-        console.log("P:",product);
         return (
-          <Grid spacing={2} sx={{ mb: 1 }} key={product.slug + product.size} container>
+          <Grid
+            spacing={2}
+            sx={{ mb: 1 }}
+            key={product.slug + product.size}
+            container
+          >
             <Grid item xs={3}>
               <NextLink href={`/product/${product.slug}`}>
                 <Link>
@@ -52,14 +64,15 @@ export const CardList: FC<Props> = ({ editable = false }) => {
               <Box display="flex" flexDirection="column">
                 <Typography variant="body1">{product.title}</Typography>
                 <Typography variant="body1">
-                  Talla: <strong>M</strong>
+                  Talla: <strong>{product.size}</strong>
                 </Typography>
 
                 {editable ? (
-                  <ItemCounter
-                    quantity={product.quantity}
-                    onChangeQuantity={(quantity) =>
-                      onChangeQuantity(product, quantity)
+                  <ItemCounterR
+                    currentValue={product.quantity}
+                    maxValue={5}
+                    updatedQuantity={(quantity) =>
+                      onNewCartQuantityValue(product, quantity)
                     }
                   />
                 ) : (

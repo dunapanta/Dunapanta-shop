@@ -9,6 +9,10 @@ type CartActionType =
   | {
       type: "Cart - Update Cart Products";
       payload: ICartProduct[];
+    }
+  | {
+      type: "Cart - Change Cart Product Quantity";
+      payload: ICartProduct;
     };
 
 export const cartReducer = (
@@ -26,6 +30,19 @@ export const cartReducer = (
       return {
         ...state,
         cart: [...action.payload],
+      };
+
+    case "Cart - Change Cart Product Quantity":
+      return {
+        ...state,
+        cart: state.cart.map((product) => {
+          if (product._id !== action.payload._id) return product;
+          if (product.size !== action.payload.size) return product;
+
+          //product.quantity = action.payload.quantity;
+          //return product;
+          return action.payload;
+        }),
       };
 
     default:
