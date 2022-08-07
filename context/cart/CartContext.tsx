@@ -16,6 +16,7 @@ export interface ContextCardProps {
   cart: ICartProduct[];
   addToCart: (product: ICartProduct) => void;
   updateCartQuantity: (product: ICartProduct) => void;
+  removeCartProduct: (product: ICartProduct) => void;
   
 }
 
