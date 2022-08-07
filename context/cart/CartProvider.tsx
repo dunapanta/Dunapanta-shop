@@ -39,7 +39,27 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
   }, []);
 
   useEffect(() => {
-    if(state.cart.length > 0) Cookie.set("cart", JSON.stringify(state.cart));
+    if (state.cart.length > 0) Cookie.set("cart", JSON.stringify(state.cart));
+  }, [state.cart]);
+
+  useEffect(() => {
+    const numberOfItems = state.cart.reduce(
+      (prev, curr) => curr.quantity + prev,
+      0
+    );
+    const subTotal = state.cart.reduce(
+      (prev, curr) => curr.price * curr.quantity + prev,
+      0
+    );
+    const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE || 0);
+
+    const orderSumary = {
+      numberOfItems,
+      subTotal,
+      tax: subTotal * taxRate,
+      total: subTotal * (1 + taxRate),
+    };
+    console.log({ orderSumary });
   }, [state.cart]);
 
   const addToCart = (product: ICartProduct) => {
@@ -77,16 +97,18 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
     });
   };
 
-  const updateCartQuantity = (product: ICartProduct) =>{
-      dispatch({type: "Cart - Change Cart Product Quantity", payload: product});
-  }
+  const updateCartQuantity = (product: ICartProduct) => {
+    dispatch({ type: "Cart - Change Cart Product Quantity", payload: product });
+  };
 
-  const removeCartProduct = (product: ICartProduct) =>{
-    dispatch({type: "Cart - Remove product in cart", payload: product});
-}
+  const removeCartProduct = (product: ICartProduct) => {
+    dispatch({ type: "Cart - Remove product in cart", payload: product });
+  };
 
   return (
-    <CartContext.Provider value={{ ...state, addToCart, removeCartProduct,updateCartQuantity }}>
+    <CartContext.Provider
+      value={{ ...state, addToCart, removeCartProduct, updateCartQuantity }}
+    >
       {children}
     </CartContext.Provider>
   );
