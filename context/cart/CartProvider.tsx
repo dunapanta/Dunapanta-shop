@@ -10,10 +10,18 @@ interface Props {
 
 export interface CartState {
   cart: ICartProduct[];
+  numberOfItems: number;
+  subTotal: number;
+  tax: number;
+  total: number;
 }
 
 const CartInitialState: CartState = {
   cart: Cookie.get("cart") ? JSON.parse(Cookie.get("cart")!) : [],
+  numberOfItems: 0,
+  subTotal: 0,
+  tax: 0,
+  total: 0,
 };
 
 export const CartProvider: FC<Props> = ({ children }: Props) => {
@@ -59,7 +67,7 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
       tax: subTotal * taxRate,
       total: subTotal * (1 + taxRate),
     };
-    console.log({ orderSumary });
+    dispatch({ type: "Cart - Update order summary", payload: orderSumary });
   }, [state.cart]);
 
   const addToCart = (product: ICartProduct) => {
