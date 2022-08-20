@@ -5,16 +5,14 @@ import { SWRConfig } from "swr";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 
 import { lightTheme } from "../themes";
-import { UiProvider, CartProvider } from "context";
+import { UiProvider, CartProvider, AuthProvider } from "context";
 
 function MyApp({ Component, pageProps }: AppProps) {
-
   const [showChildren, setShowChildren] = useState(false);
   useEffect(() => {
     setShowChildren(true);
-  }
-  , []);
-  if(!showChildren) return null;
+  }, []);
+  if (!showChildren) return null;
 
   return (
     <SWRConfig
@@ -23,14 +21,16 @@ function MyApp({ Component, pageProps }: AppProps) {
           fetch(resource, init).then((res) => res.json()),
       }}
     >
-      <CartProvider>
-        <UiProvider>
-          <ThemeProvider theme={lightTheme}>
-            <CssBaseline />
-            <Component {...pageProps} />
-          </ThemeProvider>
-        </UiProvider>
-      </CartProvider>
+      <AuthProvider>
+        <CartProvider>
+          <UiProvider>
+            <ThemeProvider theme={lightTheme}>
+              <CssBaseline />
+              <Component {...pageProps} />
+            </ThemeProvider>
+          </UiProvider>
+        </CartProvider>
+      </AuthProvider>
     </SWRConfig>
   );
 }
