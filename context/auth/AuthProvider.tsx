@@ -2,7 +2,7 @@ import { shopApi } from "api";
 import axios from "axios";
 import { IUser } from "interfaces";
 import Cookies from "js-cookie";
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import { FC } from "react";
 import { AuthContext, authReducer } from "./";
 
@@ -22,6 +22,22 @@ const AuthInitialState: AuthState = {
 
 export const AuthProvider: FC<Props> = ({ children }: Props) => {
   const [state, dispatch] = useReducer(authReducer, AuthInitialState);
+
+  useEffect(() => {
+    checkToken();
+  }, []);
+
+  const checkToken = async () => {
+    try {
+      const { data } = await shopApi.get("/user/validate-token");
+      const { token, user } = data;
+
+      Cookies.set("token", token);
+      dispatch({ type: "Auth - Login", payload: user });
+    } catch (error) {
+      Cookies.remove("token");
+    }
+  };
 
   const loginUser = async (
     email: string,
