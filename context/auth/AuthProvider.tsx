@@ -1,4 +1,5 @@
 import { shopApi } from "api";
+import axios from "axios";
 import { IUser } from "interfaces";
 import Cookies from "js-cookie";
 import { useReducer } from "react";
@@ -40,8 +41,40 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
     }
   };
 
+  const registerUser = async (
+    name: string,
+    email: string,
+    password: string
+  ): Promise<{ hasError: boolean; message?: string }> => {
+    try {
+      const { data } = await shopApi.post("/user/register", {
+        name,
+        email,
+        password,
+      });
+      const { token, user } = data;
+      return {
+        hasError: false,
+      };
+
+      Cookies.set("token", token);
+      dispatch({ type: "Auth - Login", payload: user });
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        return {
+          hasError: true,
+          message: err.message,
+        };
+      }
+      return {
+        hasError: true,
+        message: "No se pudo crear el usuario",
+      };
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ ...state, loginUser }}>
+    <AuthContext.Provider value={{ ...state, loginUser, registerUser }}>
       {children}
     </AuthContext.Provider>
   );
