@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { Box, Button, Grid, Link, TextField, Typography } from "@mui/material";
 
 import { AuthLayout } from "components/layouts";
+import { validations } from "utils";
 
 type FormData = {
   email: string;
@@ -33,10 +34,16 @@ const LoginPage = () => {
 
             <Grid item xs={12}>
               <TextField
+                type="email"
                 label="Correo"
                 variant="outlined"
                 fullWidth
-                {...register("email")}
+                {...register("email", {
+                  required: "El correo es requerido",
+                  validate: (val) => validations.isEmail(val),
+                })}
+                error={errors.email ? true : false}
+                helperText={errors.email ? errors.email.message : ""}
               />
             </Grid>
 
@@ -46,7 +53,15 @@ const LoginPage = () => {
                 type="password"
                 variant="outlined"
                 fullWidth
-                {...register("password")}
+                {...register("password", {
+                  required: "La contraseña es requerida",
+                  minLength: {
+                    value: 6,
+                    message: "Minimo 6 caracteres",
+                  },
+                })}
+                error={errors.password ? true : false}
+                helperText={errors.password ? errors.password.message : ""}
               />
             </Grid>
 
