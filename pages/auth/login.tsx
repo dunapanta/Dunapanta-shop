@@ -4,6 +4,7 @@ import { Box, Button, Grid, Link, TextField, Typography } from "@mui/material";
 
 import { AuthLayout } from "components/layouts";
 import { validations } from "utils";
+import { shopApi } from "api";
 
 type FormData = {
   email: string;
@@ -17,8 +18,14 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm<FormData>();
 
-  const onLoginUser = (data: FormData) => {
-    console.log(data);
+  const onLoginUser = async ({ email, password }: FormData) => {
+    try {
+      const { data } = await shopApi.post("/user/login", { email, password });
+      const { token, user } = data;
+      console.log({ token, user });
+    } catch (error) {
+      console.log("Error en las credenciales");
+    }
   };
 
   return (
