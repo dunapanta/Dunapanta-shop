@@ -10,6 +10,8 @@ import {
   Typography,
 } from "@mui/material";
 import { ShopLayout } from "components/layouts";
+import { GetServerSideProps } from "next";
+import { jwt } from "utils";
 
 const Address = () => {
   return (
@@ -62,6 +64,32 @@ const Address = () => {
       </Box>
     </ShopLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const { token = "" } = req.cookies;
+  let userId = "";
+  let isValidToken = false;
+
+  try {
+    userId = await jwt.verifyToken(token);
+    isValidToken = true;
+  } catch (err) {
+    isValidToken = false;
+  }
+
+  if (!isValidToken) {
+    return {
+      redirect: {
+        destination: "/auth/login?p=/checkout/address",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 export default Address;
