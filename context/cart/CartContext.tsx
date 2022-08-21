@@ -13,6 +13,7 @@ export interface ICartProduct {
 }
 
 export interface ContextCardProps {
+  isLoaded: boolean;
   cart: ICartProduct[];
   numberOfItems: number;
   subTotal: number;

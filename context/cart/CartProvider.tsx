@@ -9,6 +9,7 @@ interface Props {
 }
 
 export interface CartState {
+  isLoaded: boolean;
   cart: ICartProduct[];
   numberOfItems: number;
   subTotal: number;
@@ -17,6 +18,7 @@ export interface CartState {
 }
 
 const CartInitialState: CartState = {
+  isLoaded: false,
   cart: Cookie.get("cart") ? JSON.parse(Cookie.get("cart")!) : [],
   numberOfItems: 0,
   subTotal: 0,
