@@ -1,9 +1,10 @@
-import { shopApi } from "api";
+import { FC, useEffect, useReducer } from "react";
+import { useRouter } from "next/router";
 import axios from "axios";
 import { IUser } from "interfaces";
 import Cookies from "js-cookie";
-import { useEffect, useReducer } from "react";
-import { FC } from "react";
+
+import { shopApi } from "api";
 import { AuthContext, authReducer } from "./";
 
 interface Props {
@@ -22,6 +23,7 @@ const AuthInitialState: AuthState = {
 
 export const AuthProvider: FC<Props> = ({ children }: Props) => {
   const [state, dispatch] = useReducer(authReducer, AuthInitialState);
+  const router = useRouter();
 
   useEffect(() => {
     checkToken();
@@ -31,7 +33,7 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
     if (!Cookies.get("token")) {
       return;
     }
-    
+
     try {
       const { data } = await shopApi.get("/user/validate-token");
       const { token, user } = data;
@@ -73,12 +75,11 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
         password,
       });
       const { token, user } = data;
+      Cookies.set("token", token);
+      dispatch({ type: "Auth - Login", payload: user });
       return {
         hasError: false,
       };
-
-      Cookies.set("token", token);
-      dispatch({ type: "Auth - Login", payload: user });
     } catch (err) {
       if (axios.isAxiosError(err)) {
         return {
@@ -93,8 +94,14 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
     }
   };
 
+  const logoutUser = async () => {
+    Cookies.remove("token");
+    Cookies.remove("cart");
+    router.reload();
+  };
+
   return (
-    <AuthContext.Provider value={{ ...state, loginUser, registerUser }}>
+    <AuthContext.Provider value={{ ...state, loginUser, registerUser, logoutUser }}>
       {children}
     </AuthContext.Provider>
   );

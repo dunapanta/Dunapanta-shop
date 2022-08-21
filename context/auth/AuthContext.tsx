@@ -13,6 +13,7 @@ export interface AuthProps {
     hasError: boolean;
     message?: string;
   }>;
+  logoutUser: () => Promise<void>;
 }
 
 export const AuthContext = createContext({} as AuthProps);
