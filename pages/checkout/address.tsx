@@ -66,7 +66,7 @@ const Address = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+/* export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const { token = "" } = req.cookies;
   let userId = "";
   let isValidToken = false;
@@ -90,6 +90,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   return {
     props: {},
   };
-};
+}; */
 
 export default Address;
