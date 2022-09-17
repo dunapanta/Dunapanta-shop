@@ -12,6 +12,18 @@ import {
 import { ShopLayout } from "components/layouts";
 import { GetServerSideProps } from "next";
 import { jwt } from "utils";
+import { countries } from "utils/countries";
+
+type FormData = {
+  firstName: string;
+  lastName: string;
+  address: string;
+  address2: string;
+  zip: string;
+  city: string;
+  country: string;
+  phone: string;
+}
 
 const Address = () => {
   return (
@@ -44,10 +56,13 @@ const Address = () => {
         <Grid item xs={12} sm={6} sx={{ borderRadius: 5, borderWidth: 3 }}>
           <FormControl fullWidth>
             <InputLabel>País</InputLabel>
-            <Select variant="outlined" label="País" value={1}>
-              <MenuItem value={1}>Ecuador</MenuItem>
-              <MenuItem value={1}>Colombia</MenuItem>
-              <MenuItem value={1}>Bolivia</MenuItem>
+            <Select variant="outlined" label="País" value={"CRI"}>
+
+              {
+                countries.map(country => (
+                  <MenuItem key={country.code} value={country.code}>{country.name}</MenuItem>
+                ))
+              }
             </Select>
           </FormControl>
         </Grid>
