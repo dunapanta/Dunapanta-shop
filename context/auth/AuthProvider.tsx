@@ -97,11 +97,22 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
   const logoutUser = async () => {
     Cookies.remove("token");
     Cookies.remove("cart");
+    Cookies.remove("firstName");
+    Cookies.remove("lastName");
+    Cookies.remove("address");
+    Cookies.remove("address2");
+    Cookies.remove("zip");
+    Cookies.remove("city");
+    Cookies.remove("country");
+    Cookies.remove("phone");
+
     router.reload();
   };
 
   return (
-    <AuthContext.Provider value={{ ...state, loginUser, registerUser, logoutUser }}>
+    <AuthContext.Provider
+      value={{ ...state, loginUser, registerUser, logoutUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
