@@ -1,8 +1,8 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
     // My Authentication
@@ -20,7 +20,7 @@ export const authOptions = {
         console.log(credentials);
         //TODO: Validate credentials on my database
 
-        return {name: "daniel", correo: "dan@mail.com", roel: "admin"};
+        return { name: "daniel", correo: "dan@mail.com", role: "admin" };
       },
     }),
     //Github
@@ -30,8 +30,32 @@ export const authOptions = {
     }),
   ],
   //callbacks
-    callbacks: {
-        
-    }
+  callbacks: {
+    async jwt({ token, account, user }) {
+      //console.log({ token, account, user });
+
+      if (account) {
+        token.accessToken = account.access_token;
+
+        switch (account.type) {
+          case "credentials":
+            token.user = user;
+            break;
+          case "oauth":
+          //Crear usuario o verificar si existe en la base de datos
+        }
+      }
+      return token;
+    },
+
+    async session({ session, token, user }) {
+      //console.log({ session, token, user });
+
+      session.accessToken = token.accessToken;
+      session.user = token.user as any;
+
+      return session;
+    },
+  },
 };
 export default NextAuth(authOptions);
