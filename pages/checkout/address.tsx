@@ -21,11 +21,33 @@ type FormData = {
   firstName: string;
   lastName: string;
   address: string;
-  address2: string;
+  address2?: string;
   zip?: string;
   city: string;
   country: string;
   phone?: string;
+};
+
+const getAddressFromCookies = (): FormData => {
+  const firstName = Cookies.get("firstName") || "";
+  const lastName = Cookies.get("lastName") || "";
+  const address = Cookies.get("address") || "";
+  const address2 = Cookies.get("address2") || "";
+  const zip = Cookies.get("zip") || "";
+  const city = Cookies.get("city") || "";
+  const country = Cookies.get("country") || "";
+  const phone = Cookies.get("phone") || "";
+
+  return {
+    firstName,
+    lastName,
+    address,
+    address2,
+    zip,
+    city,
+    country,
+    phone,
+  };
 };
 
 const Address = () => {
@@ -34,25 +56,16 @@ const Address = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      address: "",
-      address2: "",
-      zip: "",
-      city: "",
-      country: countries[0].code,
-      phone: "",
-    },
+    defaultValues: getAddressFromCookies(),
   });
 
   const router = useRouter();
 
   const onSubmit = (data: FormData) => {
-    Cookies.set("firsName", data.firstName);
+    Cookies.set("firstName", data.firstName);
     Cookies.set("lastName", data.lastName);
     Cookies.set("address", data.address);
-    Cookies.set("address2", data.address2);
+    data.address2 &&  Cookies.set("address2", data.address2);
     data.zip && Cookies.set("zip", data.zip);
     Cookies.set("city", data.city);
     Cookies.set("country", data.country);

@@ -1,5 +1,6 @@
 import { createContext } from "react";
 import { ISize } from "interfaces";
+import { ShippingAddress } from "./CartProvider";
 
 export interface ICartProduct {
   _id: string;
@@ -19,6 +20,8 @@ export interface ContextCardProps {
   subTotal: number;
   tax: number;
   total: number;
+
+  shippingAddress?: ShippingAddress
 
   addToCart: (product: ICartProduct) => void;
   updateCartQuantity: (product: ICartProduct) => void;
