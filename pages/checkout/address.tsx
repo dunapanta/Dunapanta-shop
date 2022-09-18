@@ -131,7 +131,7 @@ const Address = () => {
                 select
                 variant="outlined"
                 label="País"
-                //defaultValue={countries[0].code}
+                defaultValue={Cookies.get("country") || "EC"}
                 {...register("country", {
                   required: "El correo es requerido",
                 })}

@@ -11,8 +11,48 @@ import {
 } from "@mui/material";
 import { CardList, OrderSummary } from "components/cart";
 import { ShopLayout } from "components/layouts";
+import { useContext } from "react";
+import { CartContext } from "context";
+import { countries } from "utils/countries";
 
 const SumaryPage = () => {
+  const { shippingAddress, numberOfItems } = useContext(CartContext);
+
+  if (!shippingAddress) {
+    return (
+      <ShopLayout
+        title="No shipping address"
+        pageDescription="No shipping Address"
+      >
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Box sx={{ maxWidth: 600 }}>
+            <Card>
+              <CardContent>
+                <Typography variant="h4">Shipping Address</Typography>
+                <Typography variant="body1">
+                  You have not entered a shipping address. Please enter your
+                  shipping address to continue.
+                </Typography>
+                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                  <NextLink href="/checkout/address" passHref>
+                    <Link>
+                      <Button variant="contained" color="primary">
+                        Enter Shipping Address
+                      </Button>
+                    </Link>
+                  </NextLink>
+                </Box>
+              </CardContent>
+            </Card>
+          </Box>
+        </Box>
+      </ShopLayout>
+    );
+  }
+
+  const { firstName, lastName, address, phone, address2, city, country, zip } =
+    shippingAddress;
+
   return (
     <ShopLayout title="Confirmar pedido" pageDescription="Confirmar pedido">
       <Typography variant="h1" component="h1">
@@ -28,7 +68,10 @@ const SumaryPage = () => {
           {/*  */}
           <Card className="sumary-card">
             <CardContent>
-              <Typography variant="h2">Order (3 productos)</Typography>
+              <Typography variant="h2">
+                Order ({numberOfItems}
+                {numberOfItems === 1 ? " producto" : " productos"})
+              </Typography>
               <Divider sx={{ my: 1 }} />
 
               <Box display="flex" justifyContent="end">
@@ -38,11 +81,19 @@ const SumaryPage = () => {
               </Box>
 
               <Typography variant="subtitle1">Dirección de entrega</Typography>
-              <Typography>Daniel Unapanta</Typography>
-              <Typography>Calle siempre viva</Typography>
-              <Typography>456456</Typography>
-              <Typography>Calle siempre viva</Typography>
-              <Typography>+ 593 5645</Typography>
+              <Typography>
+                {firstName} {lastName}
+              </Typography>
+              <Typography>
+                {address} {address2 ? `, ${address2}` : ""}
+              </Typography>
+              <Typography>
+                {city}, {zip}
+              </Typography>
+              <Typography>
+                {countries.find((c) => c.code === country)?.name}
+              </Typography>
+              <Typography>{phone}</Typography>
 
               <Divider sx={{ my: 1 }} />
 
