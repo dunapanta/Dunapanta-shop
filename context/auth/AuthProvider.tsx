@@ -31,7 +31,7 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
     if (status === "authenticated") {
       const { user } = session;
       console.log("user", user);
-      //dispatch({ type: "Auth - Login", payload: user as IUser });
+      dispatch({ type: "Auth - Login", payload: user as IUser });
     }
   }, [status, session]);
 
@@ -106,7 +106,6 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
   };
 
   const logoutUser = async () => {
-    Cookies.remove("token");
     Cookies.remove("cart");
     Cookies.remove("firstName");
     Cookies.remove("lastName");
@@ -117,7 +116,10 @@ export const AuthProvider: FC<Props> = ({ children }: Props) => {
     Cookies.remove("country");
     Cookies.remove("phone");
 
-    router.reload();
+    signOut();
+
+    //Cookies.remove("token");
+    //router.reload();
   };
 
   return (
