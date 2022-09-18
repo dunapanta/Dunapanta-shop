@@ -35,6 +35,12 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GITHUB_SECRET || "",
     }),
   ],
+  //Custom Pages
+  pages: {
+    signIn: "/auth/login",
+    newUser: "/auth/register",
+  },
+
   //callbacks
   callbacks: {
     async jwt({ token, account, user }) {

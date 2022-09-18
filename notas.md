@@ -46,4 +46,13 @@
   },
 ```
 
+## Clase 303 custom pages
+```
+ //Custom Pages
+  pages: {
+    signIn: "/auth/login",
+    newUser: "/auth/register",
+  },
+```
+
 
