@@ -48,7 +48,11 @@ export const authOptions: NextAuthOptions = {
             token.user = user;
             break;
           case "oauth":
-          //Crear usuario o verificar si existe en la base de datos
+            //Crear usuario o verificar si existe en la base de datos
+            token.user = await dbUsers.oauthToDbUser(
+              user?.email || "",
+              user?.name || ""
+            );
         }
       }
       return token;
