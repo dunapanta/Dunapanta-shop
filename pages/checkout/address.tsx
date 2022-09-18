@@ -16,6 +16,8 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { jwt } from "utils";
 import { countries } from "utils/countries";
+import { useContext } from "react";
+import { CartContext } from "context";
 
 type FormData = {
   firstName: string;
@@ -58,19 +60,12 @@ const Address = () => {
   } = useForm<FormData>({
     defaultValues: getAddressFromCookies(),
   });
+  const { updateAddress } = useContext(CartContext);
 
   const router = useRouter();
 
   const onSubmit = (data: FormData) => {
-    Cookies.set("firstName", data.firstName);
-    Cookies.set("lastName", data.lastName);
-    Cookies.set("address", data.address);
-    data.address2 &&  Cookies.set("address2", data.address2);
-    data.zip && Cookies.set("zip", data.zip);
-    Cookies.set("city", data.city);
-    Cookies.set("country", data.country);
-    data.phone && Cookies.set("phone", data.phone);
-
+    updateAddress(data);
     router.push("/checkout/summary");
   };
   return (

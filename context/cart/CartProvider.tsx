@@ -103,6 +103,19 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
     }
   }, []);
 
+  const updateAddress = (address: ShippingAddress) => {
+    Cookie.set("firstName", address.firstName);
+    Cookie.set("lastName", address.lastName);
+    Cookie.set("address", address.address);
+    address.address2 && Cookie.set("address2", address.address2);
+    address.zip && Cookie.set("zip", address.zip);
+    Cookie.set("city", address.city);
+    Cookie.set("country", address.country);
+    address.phone && Cookie.set("phone", address.phone);
+
+    dispatch({ type: "Update - Address", payload: address });
+  };
+
   const addToCart = (product: ICartProduct) => {
     //regresa valor booleano
     const productInCart = state.cart.some((p) => p._id === product._id);
@@ -148,7 +161,13 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
 
   return (
     <CartContext.Provider
-      value={{ ...state, addToCart, removeCartProduct, updateCartQuantity }}
+      value={{
+        ...state,
+        addToCart,
+        removeCartProduct,
+        updateCartQuantity,
+        updateAddress,
+      }}
     >
       {children}
     </CartContext.Provider>
