@@ -1,4 +1,7 @@
 import NextLink from "next/link";
+import { authOptions } from "pages/api/auth/[...nextauth]";
+import { unstable_getServerSession } from "next-auth/next";
+import { signIn } from "next-auth/react";
 import { useContext, useState } from "react";
 import { useRouter } from "next/router";
 import {
@@ -17,6 +20,7 @@ import { AuthLayout } from "components/layouts";
 import { validations } from "utils";
 import { shopApi } from "api";
 import { AuthContext } from "context";
+import { GetServerSideProps } from "next";
 
 type FormData = {
   email: string;
@@ -50,8 +54,10 @@ const RegisterPage = () => {
       return;
     }
 
-    const destination = router.query.p?.toString() || "/";
-    router.replace(destination);
+    //const destination = router.query.p?.toString() || "/";
+    //router.replace(destination);
+
+    await signIn("credentials", { email, password });
   };
 
   return (
@@ -152,6 +158,29 @@ const RegisterPage = () => {
       </form>
     </AuthLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  );
+
+  const { p = "/" } = context.query;
+
+  if (session) {
+    return {
+      redirect: {
+        destination: p.toString(),
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 export default RegisterPage;

@@ -40,6 +40,12 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/login",
     newUser: "/auth/register",
   },
+  // session expires
+  session: {
+    maxAge: 2592000, //30d
+    strategy: "jwt",
+    updateAge: 86400, //1d
+  },
 
   //callbacks
   callbacks: {
