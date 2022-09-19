@@ -16,7 +16,7 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { jwt } from "utils";
 import { countries } from "utils/countries";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { CartContext } from "context";
 
 type FormData = {
@@ -57,12 +57,20 @@ const Address = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>({
     defaultValues: getAddressFromCookies(),
   });
   const { updateAddress } = useContext(CartContext);
+  const [defaultCountry, setDefaultCountry] = useState("");
 
   const router = useRouter();
+
+  useEffect(() => {
+    const addressFromCookies = getAddressFromCookies();
+    reset(addressFromCookies);
+    setDefaultCountry(addressFromCookies.country);
+  }, [reset, getAddressFromCookies]);
 
   const onSubmit = (data: FormData) => {
     updateAddress(data);
@@ -127,23 +135,25 @@ const Address = () => {
           <Grid item xs={12} sm={6} sx={{ borderRadius: 5, borderWidth: 3 }}>
             <FormControl fullWidth>
               <InputLabel>País</InputLabel>
-              <TextField
-                select
-                variant="outlined"
-                label="País"
-                defaultValue={Cookies.get("country") || "EC"}
-                {...register("country", {
-                  required: "El correo es requerido",
-                })}
-                error={errors.country ? true : false}
-                //helperText={errors.country ? errors.country.message : ""}
-              >
-                {countries.map((country) => (
-                  <MenuItem key={country.code} value={country.code}>
-                    {country.name}
-                  </MenuItem>
-                ))}
-              </TextField>
+              {!!defaultCountry && (
+                <TextField
+                  select
+                  variant="outlined"
+                  label="País"
+                  defaultValue={defaultCountry}
+                  {...register("country", {
+                    required: "El correo es requerido",
+                  })}
+                  error={errors.country ? true : false}
+                  //helperText={errors.country ? errors.country.message : ""}
+                >
+                  {countries.map((country) => (
+                    <MenuItem key={country.code} value={country.code}>
+                      {country.name}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
             </FormControl>
           </Grid>
 
