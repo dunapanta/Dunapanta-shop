@@ -13,8 +13,6 @@ export async function middleware(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET,
     });
 
-    console.log({ session });
-
     if (!session) {
       const { origin, pathname } = request.nextUrl;
 
