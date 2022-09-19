@@ -4,6 +4,7 @@ import Cookie from "js-cookie";
 import { CartContext, cartReducer } from "./";
 import { ICartProduct } from "./CartContext";
 import { shopApi } from "api";
+import { IOrder } from "interfaces";
 
 interface Props {
   children: React.ReactNode;
@@ -161,8 +162,26 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
   };
 
   const createOrder = async () => {
+    if (!state.shippingAddress) {
+      throw new Error("No hay direccion de entrega");
+    }
+
+    const order: IOrder = {
+      orderItems: state.cart.map((p) => ({
+        ...p,
+        image: p.images,
+        size: p.size!,
+      })),
+      shippingAddress: state.shippingAddress,
+      numberOfItems: state.numberOfItems,
+      subTotal: state.subTotal,
+      tax: state.tax,
+      total: state.total,
+      isPaid: false,
+    };
+
     try {
-      const { data } = await shopApi.post("/orders");
+      const { data } = await shopApi.post("/orders", order);
       console.log("Data", data);
     } catch (err) {
       console.log("Error:", err);

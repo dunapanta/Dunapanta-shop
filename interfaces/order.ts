@@ -1,4 +1,5 @@
 import { ShippingAddress } from "context";
+import { ISize } from "./products";
 import { IUser } from "./user";
 
 export interface IOrder {
@@ -6,7 +7,7 @@ export interface IOrder {
   user?: IUser | string;
   orderItems: IOrderItem[];
   shippingAddress: ShippingAddress;
-  paymentResult: string;
+  paymentResult?: string;
   numberOfItems: number;
   subTotal: number;
   tax: number;
@@ -18,9 +19,10 @@ export interface IOrder {
 export interface IOrderItem {
   _id: string;
   title: string;
-  size: string;
+  size: ISize;
   quantity: number;
   slug: string;
   image: string;
   price: number;
+  gender: string;
 }
