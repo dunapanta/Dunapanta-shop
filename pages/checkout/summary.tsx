@@ -16,7 +16,8 @@ import { CartContext } from "context";
 import { countries } from "utils/countries";
 
 const SumaryPage = () => {
-  const { shippingAddress, numberOfItems } = useContext(CartContext);
+  const { shippingAddress, numberOfItems, createOrder } =
+    useContext(CartContext);
 
   if (!shippingAddress) {
     return (
@@ -52,6 +53,10 @@ const SumaryPage = () => {
 
   const { firstName, lastName, address, phone, address2, city, country, zip } =
     shippingAddress;
+
+  const onCreateOrder = () => {
+    createOrder();
+  };
 
   return (
     <ShopLayout title="Confirmar pedido" pageDescription="Confirmar pedido">
@@ -107,7 +112,12 @@ const SumaryPage = () => {
               <OrderSummary />
               {/* Button */}
               <Box sx={{ mt: 3 }}>
-                <Button color="secondary" className="circular-btn" fullWidth>
+                <Button
+                  color="secondary"
+                  className="circular-btn"
+                  fullWidth
+                  onClick={onCreateOrder}
+                >
                   Confirmar pedido
                 </Button>
               </Box>

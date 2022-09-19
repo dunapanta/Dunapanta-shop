@@ -3,6 +3,7 @@ import Cookie from "js-cookie";
 
 import { CartContext, cartReducer } from "./";
 import { ICartProduct } from "./CartContext";
+import { shopApi } from "api";
 
 interface Props {
   children: React.ReactNode;
@@ -159,6 +160,15 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
     dispatch({ type: "Cart - Remove product in cart", payload: product });
   };
 
+  const createOrder = async () => {
+    try {
+      const { data } = await shopApi.post("/orders");
+      console.log("Data", data);
+    } catch (err) {
+      console.log("Error:", err);
+    }
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -167,6 +177,8 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
         removeCartProduct,
         updateCartQuantity,
         updateAddress,
+        //Orders
+        createOrder,
       }}
     >
       {children}

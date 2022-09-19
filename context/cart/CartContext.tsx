@@ -21,12 +21,15 @@ export interface ContextCardProps {
   tax: number;
   total: number;
 
-  shippingAddress?: ShippingAddress
+  shippingAddress?: ShippingAddress;
 
   addToCart: (product: ICartProduct) => void;
   updateCartQuantity: (product: ICartProduct) => void;
   removeCartProduct: (product: ICartProduct) => void;
-  updateAddress: (address: ShippingAddress) => void
+  updateAddress: (address: ShippingAddress) => void;
+
+  //Orders
+  createOrder: () => Promise<void>;
 }
 
 export const CartContext = createContext({} as ContextCardProps);
