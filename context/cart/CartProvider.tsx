@@ -181,6 +181,7 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
     };
 
     try {
+      console.log("order", order);
       const { data } = await shopApi.post("/orders", order);
       console.log("Data", data);
     } catch (err) {
