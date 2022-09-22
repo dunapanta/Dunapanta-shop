@@ -24,10 +24,10 @@ type FormData = {
   lastName: string;
   address: string;
   address2?: string;
-  zip?: string;
+  zip: string;
   city: string;
   country: string;
-  phone?: string;
+  phone: string;
 };
 
 const getAddressFromCookies = (): FormData => {
@@ -62,14 +62,12 @@ const Address = () => {
     defaultValues: getAddressFromCookies(),
   });
   const { updateAddress } = useContext(CartContext);
-  const [defaultCountry, setDefaultCountry] = useState("");
 
   const router = useRouter();
 
   useEffect(() => {
     const addressFromCookies = getAddressFromCookies();
     reset(addressFromCookies);
-    setDefaultCountry(addressFromCookies.country);
   }, [reset, getAddressFromCookies]);
 
   const onSubmit = (data: FormData) => {
@@ -135,25 +133,24 @@ const Address = () => {
           <Grid item xs={12} sm={6} sx={{ borderRadius: 5, borderWidth: 3 }}>
             <FormControl fullWidth>
               <InputLabel>País</InputLabel>
-              {!!defaultCountry && (
-                <TextField
-                  select
-                  variant="outlined"
-                  label="País"
-                  defaultValue={defaultCountry}
-                  {...register("country", {
-                    required: "El correo es requerido",
-                  })}
-                  error={errors.country ? true : false}
-                  //helperText={errors.country ? errors.country.message : ""}
-                >
-                  {countries.map((country) => (
-                    <MenuItem key={country.code} value={country.code}>
-                      {country.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              )}
+
+              <TextField
+                select
+                variant="outlined"
+                label="País"
+                defaultValue="EC"
+                {...register("country", {
+                  required: "El correo es requerido",
+                })}
+                error={errors.country ? true : false}
+                //helperText={errors.country ? errors.country.message : ""}
+              >
+                {countries.map((country) => (
+                  <MenuItem key={country.code} value={country.code}>
+                    {country.name}
+                  </MenuItem>
+                ))}
+              </TextField>
             </FormControl>
           </Grid>
 
@@ -167,6 +164,32 @@ const Address = () => {
               })}
               error={errors.city ? true : false}
               helperText={errors.city ? errors.city.message : ""}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Código Postal"
+              variant="outlined"
+              fullWidth
+              {...register("zip", {
+                required: "Este campo es requerido",
+              })}
+              error={!!errors.zip}
+              helperText={errors.zip?.message}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Teléfono"
+              variant="outlined"
+              fullWidth
+              {...register("phone", {
+                required: "Este campo es requerido",
+              })}
+              error={!!errors.phone}
+              helperText={errors.phone?.message}
             />
           </Grid>
         </Grid>

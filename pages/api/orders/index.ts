@@ -3,11 +3,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import { IOrder } from "interfaces";
 import { db } from "database";
-import { Product } from "models";
+import { Product, Order } from "models";
 
-type Data = {
-  message: string;
-};
+type Data = { message: string } | IOrder;
 
 export default function handler(
   req: NextApiRequest,
@@ -27,7 +25,7 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse) => {
   const { orderItems, total } = req.body as IOrder;
 
   // Verificar session usuario
-  const session = await getSession({ req });
+  const session: any = await getSession({ req });
 
   if (!session) {
     return res.status(401).json({ message: "Not authenticated" });
@@ -41,9 +39,7 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse) => {
   const products = await Product.find({ _id: { $in: productsIds } });
   try {
     const subTotal = orderItems.reduce((prev, curr) => {
-      const currentPrice = products.find(
-        (prod) => prod._id === curr._id
-      )!.price;
+      const currentPrice = products.find((prod) => prod.id === curr._id)!.price;
 
       if (!currentPrice) {
         throw new Error("No se encontró el precio del producto");
@@ -51,7 +47,26 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse) => {
 
       return currentPrice * curr.quantity + prev;
     }, 0);
-  } catch (err) {}
 
-  return res.status(201).json(session);
+    const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE || 0);
+    const backenedTotal = subTotal * (1 + taxRate);
+
+    if (total !== backenedTotal) {
+      throw new Error("El total no coincide con el total del backend");
+    }
+
+    //Todo correcto
+    const userId = session.user._id;
+    const newOrder = new Order({ ...req.body, user: userId, isPaid: false });
+
+    await newOrder.save();
+
+    return res.status(201).json(newOrder);
+  } catch (err: any) {
+    await db.disconnect();
+    console.log("Err", err);
+    return res
+      .status(400)
+      .json({ message: err.message || "Revisar logs del servidor" });
+  }
 };
