@@ -5,6 +5,7 @@ import { CartContext, cartReducer } from "./";
 import { ICartProduct } from "./CartContext";
 import { shopApi } from "api";
 import { IOrder } from "interfaces";
+import axios from "axios";
 
 interface Props {
   children: React.ReactNode;
@@ -161,7 +162,10 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
     dispatch({ type: "Cart - Remove product in cart", payload: product });
   };
 
-  const createOrder = async () => {
+  const createOrder = async (): Promise<{
+    hasError: boolean;
+    message: string;
+  }> => {
     if (!state.shippingAddress) {
       throw new Error("No hay direccion de entrega");
     }
@@ -181,11 +185,25 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
     };
 
     try {
-      console.log("order", order);
-      const { data } = await shopApi.post("/orders", order);
-      console.log("Data", data);
+      const { data } = await shopApi.post<IOrder>("/orders", order);
+
+      return {
+        hasError: false,
+        message: data._id!,
+      };
     } catch (err) {
-      console.log("Error:", err);
+      if(axios.isAxiosError(err)){
+        return {
+          hasError: true,
+          message: err.message || "Error al crear orden",
+        };
+      }
+
+      return {
+        hasError: true,
+        message: "Error no controlado",
+      }
+
     }
   };
 

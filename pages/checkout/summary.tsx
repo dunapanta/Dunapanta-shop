@@ -1,9 +1,11 @@
 import NextLink from "next/link";
+import { useContext, useState } from "react";
 import {
   Box,
   Button,
   Card,
   CardContent,
+  Chip,
   Divider,
   Grid,
   Link,
@@ -11,13 +13,18 @@ import {
 } from "@mui/material";
 import { CardList, OrderSummary } from "components/cart";
 import { ShopLayout } from "components/layouts";
-import { useContext } from "react";
 import { CartContext } from "context";
 import { countries } from "utils/countries";
+import { useRouter } from "next/router";
 
 const SumaryPage = () => {
   const { shippingAddress, numberOfItems, createOrder } =
     useContext(CartContext);
+
+  const router = useRouter();
+
+  const [isPosting, setIsPosting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   if (!shippingAddress) {
     return (
@@ -54,8 +61,18 @@ const SumaryPage = () => {
   const { firstName, lastName, address, phone, address2, city, country, zip } =
     shippingAddress;
 
-  const onCreateOrder = () => {
-    createOrder();
+  const onCreateOrder = async () => {
+    setIsPosting(true);
+
+    const { hasError, message } = await createOrder();
+
+    if (hasError) {
+      setIsPosting(false);
+      setErrorMessage(message);
+      return;
+    }
+
+    router.replace(`/orders/${message}`);
   };
 
   return (
@@ -111,15 +128,22 @@ const SumaryPage = () => {
               {/* Order Sumary */}
               <OrderSummary />
               {/* Button */}
-              <Box sx={{ mt: 3 }}>
+              <Box sx={{ mt: 3 }} display="flex" flexDirection="column">
                 <Button
                   color="secondary"
                   className="circular-btn"
                   fullWidth
                   onClick={onCreateOrder}
+                  disabled={isPosting}
                 >
                   Confirmar pedido
                 </Button>
+
+                <Chip
+                  color="error"
+                  label={errorMessage}
+                  sx={{ display: errorMessage ? "flex" : "none", mt: 2 }}
+                />
               </Box>
             </CardContent>
           </Card>
