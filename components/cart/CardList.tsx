@@ -10,14 +10,15 @@ import {
   Typography,
 } from "@mui/material";
 import { ItemCounterR } from "components/ui";
-import { IProduct } from "interfaces";
+import { IOrderItem, IProduct } from "interfaces";
 import { CartContext, ICartProduct } from "context";
 
 interface Props {
   editable?: boolean;
+  products?: IOrderItem[];
 }
 
-export const CardList: FC<Props> = ({ editable = false }) => {
+export const CardList: FC<Props> = ({ editable = false, products = [] }) => {
   const { cart, updateCartQuantity, removeCartProduct } =
     useContext(CartContext);
 
@@ -37,9 +38,11 @@ export const CardList: FC<Props> = ({ editable = false }) => {
 
     product.quantity += quantity;
   };
+
+  const productsToShow = products ? products : cart;
   return (
     <>
-      {cart.map((product) => {
+      {productsToShow.map((product) => {
         return (
           <Grid
             spacing={2}
@@ -52,7 +55,7 @@ export const CardList: FC<Props> = ({ editable = false }) => {
                 <Link>
                   <CardActionArea>
                     <CardMedia
-                      image={`/products/${product.images}`}
+                      image={`/products/${product.image}`}
                       component="img"
                       sx={{ borderRadius: "5px" }}
                     />
@@ -73,7 +76,7 @@ export const CardList: FC<Props> = ({ editable = false }) => {
                     currentValue={product.quantity}
                     maxValue={5}
                     updatedQuantity={(quantity) =>
-                      onNewCartQuantityValue(product, quantity)
+                      onNewCartQuantityValue(product as ICartProduct, quantity)
                     }
                   />
                 ) : (
@@ -97,7 +100,7 @@ export const CardList: FC<Props> = ({ editable = false }) => {
 
               {editable && (
                 <Button
-                  onClick={() => removeCartProduct(product)}
+                  onClick={() => removeCartProduct(product as ICartProduct)}
                   variant="text"
                   color="secondary"
                 >

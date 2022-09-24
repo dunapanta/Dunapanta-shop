@@ -5,7 +5,7 @@ import { ShippingAddress } from "./CartProvider";
 export interface ICartProduct {
   _id: string;
   quantity: number;
-  images: string;
+  image: string;
   price: number;
   size?: ISize;
   slug: string;

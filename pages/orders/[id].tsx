@@ -57,7 +57,7 @@ const OrderPage: NextPage<Props> = ({ order }) => {
       <Grid container>
         <Grid item xs={12} sm={7}>
           {/* Cart List */}
-          <CardList />
+          <CardList products={order.orderItems} />
         </Grid>
         <Grid item xs={12} sm={5}>
           {/*  */}
@@ -69,12 +69,14 @@ const OrderPage: NextPage<Props> = ({ order }) => {
               </Typography>
               <Divider sx={{ my: 1 }} />
 
-
               <Typography variant="subtitle1">Dirección de entrega</Typography>
               <Typography>
                 {shippingAddress.firstName} {shippingAddress.lastName}
               </Typography>
-              <Typography>{shippingAddress.address}</Typography>
+              <Typography>
+                {shippingAddress.address}{" "}
+                {shippingAddress.address ? `, ${shippingAddress.address}` : ""}
+              </Typography>
               <Typography>{shippingAddress.city}</Typography>
               <Typography>{shippingAddress.zip}</Typography>
               <Typography>{shippingAddress.country}</Typography>
