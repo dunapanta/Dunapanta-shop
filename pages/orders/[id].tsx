@@ -85,17 +85,27 @@ const OrderPage: NextPage<Props> = ({ order }) => {
               <Divider sx={{ my: 1 }} />
 
               {/* Order Sumary */}
-              <OrderSummary />
+              <OrderSummary
+                orderValues={{
+                  numberOfItems: order.numberOfItems,
+                  tax: order.tax,
+                  subTotal: order.subTotal,
+                  total: order.total,
+                }}
+              />
               {/* Button */}
-              <Box sx={{ mt: 3 }}>
-                <h1>Pagar</h1>
-                <Chip
-                  sx={{ mt: 2 }}
-                  label="Orden Pagada"
-                  variant="outlined"
-                  color="success"
-                  icon={<CreditScoreOutlined />}
-                />
+              <Box sx={{ mt: 3 }} display="flex" flexDirection="column">
+                {order.isPaid ? (
+                  <Chip
+                    sx={{ mt: 2 }}
+                    label="Orden Pagada"
+                    variant="outlined"
+                    color="success"
+                    icon={<CreditScoreOutlined />}
+                  />
+                ) : (
+                  <h1>Pagar</h1>
+                )}
               </Box>
             </CardContent>
           </Card>
