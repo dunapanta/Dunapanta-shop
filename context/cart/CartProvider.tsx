@@ -187,12 +187,14 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
     try {
       const { data } = await shopApi.post<IOrder>("/orders", order);
 
+      dispatch({ type: "Cart - Order completed" });
+
       return {
         hasError: false,
         message: data._id!,
       };
     } catch (err) {
-      if(axios.isAxiosError(err)){
+      if (axios.isAxiosError(err)) {
         return {
           hasError: true,
           message: err.message || "Error al crear orden",
@@ -202,8 +204,7 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
       return {
         hasError: true,
         message: "Error no controlado",
-      }
-
+      };
     }
   };
 
