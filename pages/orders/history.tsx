@@ -1,7 +1,12 @@
 import NextLink from "next/link";
+import { GetServerSideProps, NextPage } from "next";
 import { Button, Chip, Grid, Link, Typography } from "@mui/material";
+import { authOptions } from "pages/api/auth/[...nextauth]";
+import { unstable_getServerSession } from "next-auth/next";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import { ShopLayout } from "components/layouts";
+import { dbOrders } from "database";
+import { IOrder } from "interfaces";
 
 const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 100 },
@@ -39,7 +44,11 @@ const rows = [
   { id: 2, paid: false, name: "Jane Doe", orderLink: "/orders/2" },
 ];
 
-const HistoryPage = () => {
+interface Props {
+  orders: IOrder[];
+}
+
+const HistoryPage: NextPage<Props> = ({ orders }) => {
   return (
     <ShopLayout
       title="Historial de pedidos"
@@ -62,4 +71,30 @@ const HistoryPage = () => {
     </ShopLayout>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session: any = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  );
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth/login?p=/orders/history",
+        permanent: false,
+      },
+    };
+  }
+
+  const orders = await dbOrders.getOrdersByUser(session.user._id);
+
+  return {
+    props: {
+      orders,
+    },
+  };
+};
+
 export default HistoryPage;
