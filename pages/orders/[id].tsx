@@ -12,7 +12,7 @@ import {
   Link,
   Typography,
 } from "@mui/material";
-import { CardList, OrderSummary } from "components/cart";
+import { CartListR, OrderSummary } from "components/cart";
 import { ShopLayout } from "components/layouts";
 import {
   CreditCardOffOutlined,
@@ -57,7 +57,7 @@ const OrderPage: NextPage<Props> = ({ order }) => {
       <Grid container>
         <Grid item xs={12} sm={7}>
           {/* Cart List */}
-          <CardList products={order.orderItems} />
+          <CartListR products={order.orderItems} />
         </Grid>
         <Grid item xs={12} sm={5}>
           {/*  */}

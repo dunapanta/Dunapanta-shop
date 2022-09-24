@@ -173,7 +173,7 @@ export const CartProvider: FC<Props> = ({ children }: Props) => {
     const order: IOrder = {
       orderItems: state.cart.map((p) => ({
         ...p,
-        image: p.image,
+        image: p.images,
         size: p.size!,
       })),
       shippingAddress: state.shippingAddress,

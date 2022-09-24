@@ -10,26 +10,27 @@ import {
   Typography,
 } from "@mui/material";
 import { ItemCounterR } from "components/ui";
-import { IProduct } from "interfaces";
+import { IOrderItem, IProduct } from "interfaces";
 import { CartContext, ICartProduct } from "context";
 
 interface Props {
   editable?: boolean;
+  products?: any;
 }
 
-export const CardList: FC<Props> = ({ editable = false }) => {
+export const CartListR: FC<Props> = ({ editable = false, products = [] }) => {
   const { cart, updateCartQuantity, removeCartProduct } =
     useContext(CartContext);
 
   const onNewCartQuantityValue = (
-    product: ICartProduct,
+    product: any,
     newQuantityValue: number
   ) => {
     product.quantity = newQuantityValue;
     updateCartQuantity(product);
   };
 
-  const onChangeQuantity = (product: ICartProduct, quantity: number) => {
+  const onChangeQuantity = (product: any, quantity: number) => {
     let maxItemsValue = 3;
     //if (maxItemsValue === 0) return;
     if (product.quantity === 1 && quantity < 1) return;
@@ -37,9 +38,11 @@ export const CardList: FC<Props> = ({ editable = false }) => {
 
     product.quantity += quantity;
   };
+
+  const productsToShow = products ? products : cart;
   return (
     <>
-      {cart.map((product) => {
+      {productsToShow.map((product:any) => {
         return (
           <Grid
             spacing={2}
@@ -73,7 +76,7 @@ export const CardList: FC<Props> = ({ editable = false }) => {
                     currentValue={product.quantity}
                     maxValue={5}
                     updatedQuantity={(quantity) =>
-                      onNewCartQuantityValue(product, quantity)
+                      onNewCartQuantityValue(product as ICartProduct, quantity)
                     }
                   />
                 ) : (
@@ -97,7 +100,7 @@ export const CardList: FC<Props> = ({ editable = false }) => {
 
               {editable && (
                 <Button
-                  onClick={() => removeCartProduct(product)}
+                  onClick={() => removeCartProduct(product as ICartProduct)}
                   variant="text"
                   color="secondary"
                 >
