@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
         },
       },
       async authorize(credentials) {
-        console.log(credentials);
+       
         //Validate credentials on my database
         return await dbUsers.checkUserEmailPassword(
           credentials!.email,
