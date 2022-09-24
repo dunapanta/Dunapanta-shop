@@ -1,3 +1,4 @@
+import { GetServerSideProps } from "next";
 import { useContext, useEffect, useState } from "react";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
@@ -21,7 +22,7 @@ import { validations } from "utils";
 import { shopApi } from "api";
 import { AuthContext } from "context";
 import { useRouter } from "next/router";
-import { GetServerSideProps } from "next";
+
 
 type FormData = {
   email: string;

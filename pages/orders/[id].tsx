@@ -1,4 +1,7 @@
+import { GetServerSideProps, NextPage } from "next";
 import NextLink from "next/link";
+import { authOptions } from "pages/api/auth/[...nextauth]";
+import { unstable_getServerSession } from "next-auth/next";
 import {
   Box,
   Card,
@@ -16,8 +19,14 @@ import {
   CreditScore,
   CreditScoreOutlined,
 } from "@mui/icons-material";
+import { dbOrders } from "database";
+import { IOrder } from "interfaces";
 
-const OrderPage = () => {
+interface Props {
+  order: IOrder;
+}
+const OrderPage: NextPage<Props> = ({ order }) => {
+ 
   return (
     <ShopLayout
       title="Detalles del pedido"
@@ -94,6 +103,53 @@ const OrderPage = () => {
       </Grid>
     </ShopLayout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { id = "" } = context.query;
+
+  const session: any = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  );
+
+  console.log("SESSION", { session });
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: `/auth/login?p=/orders/${id}`,
+        permanent: false,
+      },
+    };
+  }
+
+  const order = await dbOrders.getOrderById(id.toString());
+
+  if (!order) {
+    return {
+      redirect: {
+        destination: `/orders/history`,
+        permanent: false,
+      },
+    };
+  }
+
+  if (order.user !== session.user._id) {
+    return {
+      redirect: {
+        destination: `/orders/history`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      order,
+    },
+  };
 };
 
 export default OrderPage;
