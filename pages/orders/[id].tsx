@@ -26,30 +26,33 @@ interface Props {
   order: IOrder;
 }
 const OrderPage: NextPage<Props> = ({ order }) => {
- 
+  const { shippingAddress } = order;
   return (
     <ShopLayout
       title="Detalles del pedido"
       pageDescription="Detalles del pedido"
     >
       <Typography variant="h1" component="h1">
-        Order: 3423463
+        Order: {order._id}
       </Typography>
 
-      {/* <Chip
-        sx={{ mt: 2 }}
-        label="Pendiente de pago"
-        variant="outlined"
-        color="error"
-        icon={<CreditCardOffOutlined />}
-      /> */}
-      <Chip
-        sx={{ mt: 2 }}
-        label="Orden Pagada"
-        variant="outlined"
-        color="success"
-        icon={<CreditScoreOutlined />}
-      />
+      {order.isPaid ? (
+        <Chip
+          sx={{ mt: 2 }}
+          label="Orden Pagada"
+          variant="outlined"
+          color="success"
+          icon={<CreditScoreOutlined />}
+        />
+      ) : (
+        <Chip
+          sx={{ mt: 2 }}
+          label="Pendiente de pago"
+          variant="outlined"
+          color="error"
+          icon={<CreditCardOffOutlined />}
+        />
+      )}
 
       <Grid container>
         <Grid item xs={12} sm={7}>
@@ -60,29 +63,24 @@ const OrderPage: NextPage<Props> = ({ order }) => {
           {/*  */}
           <Card className="sumary-card">
             <CardContent>
-              <Typography variant="h2">Order (3 productos)</Typography>
+              <Typography variant="h2">
+                Order ({order.numberOfItems}{" "}
+                {order.numberOfItems > 1 ? "productos" : "producto"})
+              </Typography>
               <Divider sx={{ my: 1 }} />
 
-              <Box display="flex" justifyContent="end">
-                <NextLink href="/checkout/address" passHref>
-                  <Link underline="always">Editar</Link>
-                </NextLink>
-              </Box>
 
               <Typography variant="subtitle1">Dirección de entrega</Typography>
-              <Typography>Daniel Unapanta</Typography>
-              <Typography>Calle siempre viva</Typography>
-              <Typography>456456</Typography>
-              <Typography>Calle siempre viva</Typography>
-              <Typography>+ 593 5645</Typography>
+              <Typography>
+                {shippingAddress.firstName} {shippingAddress.lastName}
+              </Typography>
+              <Typography>{shippingAddress.address}</Typography>
+              <Typography>{shippingAddress.city}</Typography>
+              <Typography>{shippingAddress.zip}</Typography>
+              <Typography>{shippingAddress.country}</Typography>
+              <Typography>{shippingAddress.phone}</Typography>
 
               <Divider sx={{ my: 1 }} />
-
-              <Box display="flex" justifyContent="end">
-                <NextLink href="/cart" passHref>
-                  <Link underline="always">Editar</Link>
-                </NextLink>
-              </Box>
 
               {/* Order Sumary */}
               <OrderSummary />
