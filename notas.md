@@ -55,4 +55,8 @@
   },
 ```
 
+## Clase 332 Relación con Paypal
+- Se debe establecer una relación entre la orden y el gestor de pagos 
+- en el modelo se pone transactionId y en la interfaz IOrder
+
 

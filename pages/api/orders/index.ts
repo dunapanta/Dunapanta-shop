@@ -58,6 +58,8 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse) => {
     //Todo correcto
     const userId = session.user._id;
     const newOrder = new Order({ ...req.body, user: userId, isPaid: false });
+    //for paypal 2 decimal places
+    newOrder.total = Math.round(newOrder.total * 100) / 100;
 
     await newOrder.save();
     await db.disconnect();
