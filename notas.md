@@ -84,7 +84,7 @@ export default function App() {
 }
 ```
 - Agrego boton de Paypal
-````
+```
 <PayPalButtons
                 createOrder={(data, actions) => {
                     return actions.order.create({
@@ -106,4 +106,16 @@ export default function App() {
             />
 ```
 
+## Clase 334 Verificar pago desde el backend
+- almacenar id de paypal
+- definir peticion al backend para verificar que el pago fue realizado en paypal
+- generar token de acceso paypal
+- generar Bearer token
+```
+PAYPAL_OAUTH_URL=https://api-m.sandbox.paypal.com/v1/oauth2/token
+```
+- la que paypal envia al hacer el pago `link`
+```
+PAYPAL_ORDERS_URL=https://api.sandbox.paypal.com/v2/checkout/orders
+```
 
