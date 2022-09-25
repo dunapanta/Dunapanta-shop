@@ -59,4 +59,11 @@
 - Se debe establecer una relación entre la orden y el gestor de pagos 
 - en el modelo se pone transactionId y en la interfaz IOrder
 
+## Clase 333 Paypal developer dashboard
+- Para hacer un cobro no es mas que remover la palabra sandbox
+- Create App
+-- Agregar el nombre de la app
+-- Seleccionar Merchant
+- Obtenemos `CLIENT ID` y `SECRET` y agregamos en variables de entorno
+
 
