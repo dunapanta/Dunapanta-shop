@@ -119,3 +119,8 @@ PAYPAL_OAUTH_URL=https://api-m.sandbox.paypal.com/v1/oauth2/token
 PAYPAL_ORDERS_URL=https://api.sandbox.paypal.com/v2/checkout/orders
 ```
 
+# Clase 135 Generar token 
+- copiamos el link de oauth2 en postman usando Basic Auth
+- en body agregar `grant_type` el value `client_credentials`
+- se genera un `access_token`
+- con este token se puede llamar al otro endpoint para verificar la orden
