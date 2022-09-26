@@ -124,3 +124,4 @@ PAYPAL_ORDERS_URL=https://api.sandbox.paypal.com/v2/checkout/orders
 - en body agregar `grant_type` el value `client_credentials`
 - se genera un `access_token`
 - con este token se puede llamar al otro endpoint para verificar la orden
+- Verificar el pago completo de la orden con el llamado al segundo endpoint
