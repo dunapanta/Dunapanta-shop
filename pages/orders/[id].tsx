@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { GetServerSideProps, NextPage } from "next";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
@@ -9,6 +10,7 @@ import {
   Card,
   CardContent,
   Chip,
+  CircularProgress,
   Divider,
   Grid,
   Link,
@@ -39,6 +41,7 @@ interface Props {
   order: IOrder;
 }
 const OrderPage: NextPage<Props> = ({ order }) => {
+  const [isPaying, setIsPaying] = useState(false);
   const router = useRouter();
   const { shippingAddress } = order;
 
@@ -46,6 +49,8 @@ const OrderPage: NextPage<Props> = ({ order }) => {
     if (details.status !== "COMPLETED") {
       return alert("Payment failed");
     }
+
+    setIsPaying(true);
 
     try {
       const { data } = await shopApi.post("/orders/pay", {
@@ -56,6 +61,7 @@ const OrderPage: NextPage<Props> = ({ order }) => {
       //refresh the page to get updated order
       router.reload();
     } catch (err) {
+      setIsPaying(false);
       console.log(err);
       alert("Payment failed");
     }
@@ -129,37 +135,53 @@ const OrderPage: NextPage<Props> = ({ order }) => {
               />
               {/* Button */}
               <Box sx={{ mt: 3 }} display="flex" flexDirection="column">
-                {order.isPaid ? (
-                  <Chip
-                    sx={{ mt: 2 }}
-                    label="Orden Pagada"
-                    variant="outlined"
-                    color="success"
-                    icon={<CreditScoreOutlined />}
-                  />
-                ) : (
-                  <PayPalButtons
-                    createOrder={(data, actions) => {
-                      return actions.order.create({
-                        purchase_units: [
-                          {
-                            amount: {
-                              value: `${order.total}`,
-                            },
-                          },
-                        ],
-                      });
-                    }}
-                    onApprove={(data, actions) => {
-                      return actions.order!.capture().then((details) => {
-                        onOrderComplete(details);
-                        //console.log({ details });
-                        //const name = details.payer.name!.given_name;
-                        //alert(`Transaction completed by ${name}`);
-                      });
-                    }}
-                  />
+                {isPaying && (
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    className="fadeIn"
+                  >
+                    <CircularProgress />
+                  </Box>
                 )}
+
+                {/* Paypal Buttons */}
+                <Box
+                  sx={{ display: isPaying ? "none" : "flex", flex: 1 }}
+                  flexDirection="column"
+                >
+                  {order.isPaid ? (
+                    <Chip
+                      sx={{ mt: 2 }}
+                      label="Orden Pagada"
+                      variant="outlined"
+                      color="success"
+                      icon={<CreditScoreOutlined />}
+                    />
+                  ) : (
+                    <PayPalButtons
+                      createOrder={(data, actions) => {
+                        return actions.order.create({
+                          purchase_units: [
+                            {
+                              amount: {
+                                value: `${order.total}`,
+                              },
+                            },
+                          ],
+                        });
+                      }}
+                      onApprove={(data, actions) => {
+                        return actions.order!.capture().then((details) => {
+                          onOrderComplete(details);
+                          //console.log({ details });
+                          //const name = details.payer.name!.given_name;
+                          //alert(`Transaction completed by ${name}`);
+                        });
+                      }}
+                    />
+                  )}
+                </Box>
               </Box>
             </CardContent>
           </Card>

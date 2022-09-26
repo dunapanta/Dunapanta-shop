@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
+import { getSession } from "next-auth/react";
 
 import { db } from "database";
 import { IPaypal } from "interfaces";
@@ -56,6 +57,16 @@ const getPaypalBearerToken = async (): Promise<string | null> => {
 };
 
 const payOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+
+  //Veriy session
+  // Verificar session usuario
+  const session: any = await getSession({ req });
+
+  if (!session) {
+    return res.status(401).json({ message: "Not authenticated" });
+  }
+
+
   const paypalBearerToken = await getPaypalBearerToken();
 
   if (!paypalBearerToken)
