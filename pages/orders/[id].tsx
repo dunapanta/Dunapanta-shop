@@ -1,5 +1,6 @@
 import { GetServerSideProps, NextPage } from "next";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { authOptions } from "pages/api/auth/[...nextauth]";
 import { unstable_getServerSession } from "next-auth/next";
@@ -22,12 +23,44 @@ import {
 } from "@mui/icons-material";
 import { dbOrders } from "database";
 import { IOrder } from "interfaces";
+import { shopApi } from "api";
+
+export type OrderResponeBody = {
+  id: string;
+  status:
+    | "COMPLETED"
+    | "SAVED"
+    | "APPROVED"
+    | "VOIDED"
+    | "PAYER_ACTION_REQUIRED";
+};
 
 interface Props {
   order: IOrder;
 }
 const OrderPage: NextPage<Props> = ({ order }) => {
+  const router = useRouter();
   const { shippingAddress } = order;
+
+  const onOrderComplete = async (details: OrderResponeBody) => {
+    if (details.status !== "COMPLETED") {
+      return alert("Payment failed");
+    }
+
+    try {
+      const { data } = await shopApi.post("/orders/pay", {
+        transactionId: details.id,
+        orderId: order._id,
+      });
+
+      //refresh the page to get updated order
+      router.reload();
+    } catch (err) {
+      console.log(err);
+      alert("Payment failed");
+    }
+  };
+
   return (
     <ShopLayout
       title="Detalles del pedido"
@@ -119,8 +152,9 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                     }}
                     onApprove={(data, actions) => {
                       return actions.order!.capture().then((details) => {
-                        console.log({ details });
-                        const name = details.payer.name!.given_name;
+                        onOrderComplete(details);
+                        //console.log({ details });
+                        //const name = details.payer.name!.given_name;
                         //alert(`Transaction completed by ${name}`);
                       });
                     }}
