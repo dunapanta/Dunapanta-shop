@@ -35,7 +35,7 @@ const updateUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   if (!isValidObjectId(userId))
     return res.status(400).json({ message: "Invalid user id" });
 
-  const validRoles = ["admin"];
+  const validRoles = ["admin", "client"];
 
   if (!validRoles.includes(role)) {
     return res
