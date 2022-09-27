@@ -7,22 +7,43 @@ import * as jose from "jose";
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith("/checkout")) {
-    const session = await getToken({
-      req: request,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
+  //if (request.nextUrl.pathname.startsWith("/checkout")) {
+  const session: any = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
-    if (!session) {
-      const { origin, pathname } = request.nextUrl;
+  if (!session) {
+    const { origin, pathname } = request.nextUrl;
 
-      return NextResponse.redirect(`${origin}/auth/login?p=${pathname}`);
+    //protect admin endpoint
+    if (request.nextUrl.pathname.startsWith("/api/admin")) {
+      return NextResponse.redirect(
+        new URL("api/auth/anauthorized", request.url)
+      );
     }
+    return NextResponse.redirect(`${origin}/auth/login?p=${pathname}`);
+  }
 
-    return NextResponse.next();
+  const validRoles = ["admin"];
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    if (!validRoles.includes(session.user.role)) {
+      return NextResponse.redirect(
+        new URL("/", request.url)
+      );
+    }
+  }
 
-    //Custom JWT
-    /*  // Getting cookies from the request
+  if (request.nextUrl.pathname.startsWith('/api/admin')) {
+    if (!validRoles.includes(session.user.role)) {
+      return NextResponse.redirect(new URL('/api/auth/unauthorized', request.url));
+    }
+  }
+
+  return NextResponse.next();
+
+  //Custom JWT
+  /*  // Getting cookies from the request
          const token = request.cookies.get('token');
          let isValidToken = false;
 
@@ -46,10 +67,10 @@ export async function middleware(request: NextRequest) {
                  new URL(`/auth/login?redirect=${pathname}`, request.url)
              );
          } */
-  }
+  //}
 }
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ["/checkout/:path*"],
+  matcher: ["/checkout/:path*", "/admin/:path*", "/api/admin/:path*"],
 };
