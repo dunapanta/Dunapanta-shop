@@ -14,6 +14,7 @@ export interface IOrder {
   total: number;
   isPaid: boolean;
   paidAt?: string;
+  createdAt: string;
 
   //paypal relation
   transactionId?: string;
