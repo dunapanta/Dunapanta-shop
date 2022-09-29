@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import {
   DriveFileRenameOutline,
@@ -55,6 +55,8 @@ interface Props {
 }
 
 const ProductAdminPage: FC<Props> = ({ product }) => {
+  const [newTagValue, setNewTagValue] = useState("");
+
   const {
     register,
     handleSubmit,
@@ -96,7 +98,19 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     setValue("sizes", [...currentSizes, size], { shouldValidate: true });
   };
 
-  const onDeleteTag = (tag: string) => {};
+  const onNewTag = () => {
+    const newTag = newTagValue.trim().toLocaleLowerCase();
+    setNewTagValue("");
+    const currentTags = getValues("tags");
+    if (currentTags.includes(newTag)) return;
+
+    setValue("tags", [...currentTags, newTag], { shouldValidate: true });
+  };
+
+  const onDeleteTag = (tag: string) => {
+    const updatedTags = getValues("tags").filter((t) => t !== tag);
+    setValue("tags", updatedTags, { shouldValidate: true });
+  };
 
   const onSubmit = (formData: FormData) => {
     console.log({ formData });
@@ -259,8 +273,13 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               label="Etiquetas"
               variant="filled"
               fullWidth
+              value={newTagValue}
               sx={{ mb: 1 }}
               helperText="Presiona [spacebar] para agregar"
+              onChange={(e) => setNewTagValue(e.target.value)}
+              onKeyUp={({ code }) =>
+                code === "Space" ? onNewTag() : undefined
+              }
             />
 
             <Box
@@ -273,7 +292,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               }}
               component="ul"
             >
-              {product.tags.map((tag) => {
+              {getValues("tags").map((tag) => {
                 return (
                   <Chip
                     key={tag}
