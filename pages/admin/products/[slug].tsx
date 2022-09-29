@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import {
   DriveFileRenameOutline,
@@ -61,9 +61,27 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     formState: { errors },
     getValues,
     setValue,
+    watch,
   } = useForm({
     defaultValues: product,
   });
+
+  useEffect(() => {
+    const subscrition = watch((value, { name, type }) => {
+      if (name === "title") {
+        const newSlug =
+          value.title
+            ?.trim()
+            .replaceAll(" ", "_")
+            .replaceAll("'", "")
+            .toLocaleLowerCase() || "";
+
+        setValue("slug", newSlug);
+      }
+    });
+
+    return () => subscrition.unsubscribe();
+  }, [watch, setValue]);
 
   const onChangeSize = (size: any) => {
     const currentSizes = getValues("sizes");
@@ -208,7 +226,9 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 <FormControlLabel
                   key={size}
                   control={
-                    <Checkbox checked={getValues("sizes").includes(size)} />
+                    <Checkbox
+                      checked={getValues("sizes").includes(size as any)}
+                    />
                   }
                   label={size}
                   onChange={(e) => onChangeSize(size)}
