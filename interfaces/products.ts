@@ -8,8 +8,8 @@ export interface IProduct {
   slug: string;
   tags: string[];
   title: string;
-  type: IType;
-  gender: "men" | "women" | "kid" | "other";
+  type: IType | string;
+  gender: "men" | "women" | "kid" | "other" | string;
   createdAt: string;
   updatedAt: string;
 }

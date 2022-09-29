@@ -33,7 +33,7 @@ import { IProduct } from "interfaces";
 import { dbProducts } from "database";
 
 const validTypes = ["shirts", "pants", "hoodies", "hats"];
-const validGender = ["men", "women", "kid", "unisex"];
+const validGender = ["men", "women", "kid", "other"];
 const validSizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
 interface FormData {
@@ -59,6 +59,8 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
+    setValue,
   } = useForm({
     defaultValues: product,
   });
@@ -151,8 +153,10 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               <FormLabel>Tipo</FormLabel>
               <RadioGroup
                 row
-                // value={ status }
-                // onChange={ onStatusChanged }
+                value={getValues("type")}
+                onChange={(e) =>
+                  setValue("type", e.target.value, { shouldValidate: true })
+                }
               >
                 {validTypes.map((option) => (
                   <FormControlLabel
@@ -169,8 +173,10 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               <FormLabel>Género</FormLabel>
               <RadioGroup
                 row
-                // value={ status }
-                // onChange={ onStatusChanged }
+                value={getValues("gender")}
+                onChange={(e) =>
+                  setValue("gender", e.target.value, { shouldValidate: true })
+                }
               >
                 {validGender.map((option) => (
                   <FormControlLabel
