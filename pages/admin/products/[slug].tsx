@@ -130,7 +130,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
         data: formData,
       });
 
-      console.log({ data });
       if (!formData._id) {
         router.replace(`/admin/products/${data.slug}`);
       } else {
@@ -388,6 +387,9 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 label="Es necesario al 2 imagenes"
                 color="error"
                 variant="outlined"
+                sx={{
+                  display: getValues("images").length < 2 ? "flex" : "none",
+                }}
               />
 
               <Grid container spacing={2}>
@@ -397,7 +399,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                       <CardMedia
                         component="img"
                         className="fadeIn"
-                        image={`/products/${img}`}
+                        image={img}
                         alt={img}
                       />
                       <CardActions>
