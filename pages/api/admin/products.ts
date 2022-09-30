@@ -1,9 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import type { NextApiRequest, NextApiResponse } from "next";
+import { isValidObjectId } from "mongoose";
 import { db } from "database";
 import { IProduct } from "interfaces";
 import { Product } from "models";
-import { isValidObjectId } from "mongoose";
-import type { NextApiRequest, NextApiResponse } from "next";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config(process.env.CLOUDINARY_URL || "");
 
 type Data =
   | {
@@ -85,8 +88,6 @@ const updateProduct = async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ message: "You must upload at least 2 images" });
   }
 
-  //TODO: Upload images to cloudinary
-
   try {
     await db.connect();
 
@@ -96,7 +97,16 @@ const updateProduct = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(400).json({ message: "Product not found" });
     }
 
-    //TODO eliminar fotos en Cloudinary
+    //eliminar fotos en Cloudinary
+    product.images.forEach(async (image) => {
+      if (!images.includes(image)) {
+        const [fileId, extension] = image
+          .substring(image.lastIndexOf("/") + 1)
+          .split(".");
+        console.log({ image, fileId, extension });
+        await cloudinary.uploader.destroy(fileId);
+      }
+    });
 
     await product.update(req.body);
 

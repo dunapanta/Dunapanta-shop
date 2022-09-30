@@ -145,8 +145,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
   const onFileChange = async ({ target }: ChangeEvent<HTMLInputElement>) => {
     if (!target.files || target.files.length === 0) return;
 
-    console.log("AQUI",target.files);
-
     try {
       for (const file of target.files) {
         const formData = new FormData();
@@ -155,11 +153,21 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
           "/admin/upload",
           formData
         );
-        console.log("DATA", { data });
+        setValue("images", [...getValues("images"), data.message], {
+          shouldValidate: true,
+        });
       }
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const onDeleteImage = (image: string) => {
+    setValue(
+      "images",
+      getValues("images").filter((img) => img !== image),
+      { shouldValidate: true }
+    );
   };
 
   return (
@@ -383,7 +391,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               />
 
               <Grid container spacing={2}>
-                {product.images.map((img) => (
+                {getValues("images").map((img) => (
                   <Grid item xs={4} sm={3} key={img}>
                     <Card>
                       <CardMedia
@@ -393,7 +401,11 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                         alt={img}
                       />
                       <CardActions>
-                        <Button fullWidth color="error">
+                        <Button
+                          fullWidth
+                          onClick={() => onDeleteImage(img)}
+                          color="error"
+                        >
                           Borrar
                         </Button>
                       </CardActions>
