@@ -1,6 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import formidable from "formidable";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config(process.env.CLOUDINARY_URL || "");
 
 type Data = {
   message: string;
@@ -24,11 +27,26 @@ export default function handler(
   }
 }
 
-const parseFiles = async (req: NextApiRequest) => {
-    
+const saveFiles = async (file: formidable.File): Promise<string> => {
+  const { secure_url } = await cloudinary.uploader.upload(file.filepath);
+  return secure_url;
+};
+
+const parseFiles = async (req: NextApiRequest): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const form = new formidable.IncomingForm();
+    form.parse(req, async (err, fields, files) => {
+      if (err) {
+        return reject(err);
+      }
+
+      const filePah = await saveFiles(files.file as formidable.File);
+      resolve(filePah);
+    });
+  });
 };
 
 const uploadFile = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  await parseFiles(req);
-  return res.status(200).json({ message: "File uploaded" });
+  const imageUrl = await parseFiles(req);
+  return res.status(200).json({ message: imageUrl });
 };
