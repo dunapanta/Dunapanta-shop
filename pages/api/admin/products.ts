@@ -40,7 +40,37 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 const createProduct = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
-) => {};
+) => {
+  const { images = [] } = req.body as IProduct;
+
+  if (images.length < 2) {
+    return res
+      .status(400)
+      .json({ message: "You must upload at least 2 images" });
+  }
+
+  try {
+    await db.connect();
+
+    const productInDB = await Product.findOne({ slug: req.body.slug });
+    if (productInDB) {
+      await db.disconnect();
+      return res.status(400).json({ message: "Product already exists" });
+    }
+
+    const product = new Product(req.body);
+    await product.save();
+    await db.disconnect();
+
+    return res.status(201).json(product);
+
+    await db.disconnect();
+  } catch (err) {
+    console.log("Error", err);
+    await db.disconnect();
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 const updateProduct = async (req: NextApiRequest, res: NextApiResponse) => {
   const { _id = "", images = [] } = req.body as IProduct;

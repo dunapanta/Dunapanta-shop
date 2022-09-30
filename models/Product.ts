@@ -3,7 +3,7 @@ import mongoose, { Schema, model, Model } from "mongoose";
 
 const productSchema = new Schema(
   {
-    description: { type: String, required: true },
+    description: { type: String, required: true, default: "" },
     images: [{ type: String }],
     inStock: { type: Number, required: true, default: 0 },
     price: { type: Number, required: true, default: 0 },
@@ -18,12 +18,13 @@ const productSchema = new Schema(
     ],
     slug: { type: String, required: true, unique: true },
     tags: [{ type: String }],
-    title: { type: String, required: true },
+    title: { type: String, required: true, default: "" },
     type: {
       type: String,
       enum: {
         values: ["shirts", "pants", "shoes", "hoodies", "hats", "accessories"],
         message: "{VALUE} no es un tipo de producto permitido",
+        default: "shirts",
       },
     },
     gender: {
@@ -32,6 +33,7 @@ const productSchema = new Schema(
         values: ["men", "women", "other", "kid"],
         message: "{VALUE} no está soportado",
       },
+      default: "women",
     },
   },
   {
