@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import {
@@ -35,7 +35,6 @@ import { dbProducts } from "database";
 import { shopApi } from "api";
 import { Product } from "models";
 
-
 const validTypes = ["shirts", "pants", "hoodies", "hats"];
 const validGender = ["men", "women", "kid", "other"];
 const validSizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
@@ -61,6 +60,7 @@ interface Props {
 const ProductAdminPage: FC<Props> = ({ product }) => {
   const [newTagValue, setNewTagValue] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const filenputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   const {
@@ -139,6 +139,19 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     } catch (err) {
       console.log(err);
       setIsSaving(false);
+    }
+  };
+
+  const onFileChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    if (!target.files || target.files.length === 0) return;
+
+    try {
+      for (const file of target.files) {
+        const formData = new FormData();
+        console.log({ file });
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -342,9 +355,19 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 fullWidth
                 startIcon={<UploadOutlined />}
                 sx={{ mb: 3 }}
+                onClick={() => filenputRef.current?.click()}
               >
                 Cargar imagen
               </Button>
+
+              <input
+                type="file"
+                ref={filenputRef}
+                multiple
+                accept="image/png, image/gif, image/jpeg"
+                style={{ display: "none" }}
+                onChange={onFileChange}
+              />
 
               <Chip
                 label="Es necesario al 2 imagenes"
