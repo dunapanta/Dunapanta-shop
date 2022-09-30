@@ -35,7 +35,7 @@ const ProductPage: NextPage<Props> = ({ product }) => {
     size: undefined,
     slug: product.slug,
     title: product.title,
-    gender: product.gender,
+    gender: product.gender as any,
   });
 
   const onSelectedSize = (size: ISize) => {

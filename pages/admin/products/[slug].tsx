@@ -31,6 +31,7 @@ import { useForm } from "react-hook-form";
 import { AdminLayout } from "components/layouts";
 import { IProduct } from "interfaces";
 import { dbProducts } from "database";
+import { shopApi } from "api";
 
 const validTypes = ["shirts", "pants", "hoodies", "hats"];
 const validGender = ["men", "women", "kid", "other"];
@@ -56,6 +57,7 @@ interface Props {
 
 const ProductAdminPage: FC<Props> = ({ product }) => {
   const [newTagValue, setNewTagValue] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   const {
     register,
@@ -112,8 +114,28 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     setValue("tags", updatedTags, { shouldValidate: true });
   };
 
-  const onSubmit = (formData: FormData) => {
-    console.log({ formData });
+  const onSubmit = async (formData: FormData) => {
+    if (formData.images.length < 2) return alert("Mínimo 2 imágenes");
+
+    setIsSaving(true);
+
+    try {
+      const { data } = await shopApi({
+        url: "/admin/products",
+        method: "PUT",
+        data: formData,
+      });
+
+      console.log({ data });
+      if (!formData._id) {
+        //TODO: RECARGAR
+      } else {
+        setIsSaving(false);
+      }
+    } catch (err) {
+      console.log(err);
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -129,6 +151,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
             startIcon={<SaveOutlined />}
             sx={{ width: "150px" }}
             type="submit"
+            disabled={isSaving}
           >
             Guardar
           </Button>
