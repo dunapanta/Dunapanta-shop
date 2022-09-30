@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import {
   DriveFileRenameOutline,
   SaveOutlined,
@@ -32,6 +33,8 @@ import { AdminLayout } from "components/layouts";
 import { IProduct } from "interfaces";
 import { dbProducts } from "database";
 import { shopApi } from "api";
+import { Product } from "models";
+
 
 const validTypes = ["shirts", "pants", "hoodies", "hats"];
 const validGender = ["men", "women", "kid", "other"];
@@ -58,6 +61,7 @@ interface Props {
 const ProductAdminPage: FC<Props> = ({ product }) => {
   const [newTagValue, setNewTagValue] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -122,13 +126,13 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     try {
       const { data } = await shopApi({
         url: "/admin/products",
-        method: "PUT",
+        method: formData._id ? "PUT" : "POST",
         data: formData,
       });
 
       console.log({ data });
       if (!formData._id) {
-        //TODO: RECARGAR
+        router.replace(`/admin/products/${data.slug}`);
       } else {
         setIsSaving(false);
       }
@@ -381,7 +385,16 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { slug = "" } = query;
 
-  const product = await dbProducts.getProductBySlug(slug.toString());
+  let product: IProduct | null;
+
+  if (slug === "new") {
+    const termProduct = JSON.parse(JSON.stringify(new Product()));
+    delete termProduct._id;
+    termProduct.images = ["img1.jpg", "img2.jpg"];
+    product = termProduct;
+  } else {
+    product = await dbProducts.getProductBySlug(slug.toString());
+  }
 
   if (!product) {
     return {

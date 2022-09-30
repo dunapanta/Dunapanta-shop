@@ -2,10 +2,11 @@ import React from "react";
 import NextLink from "next/link";
 import useSWR from "swr";
 import {
+  AddOutlined,
   CategoryOutlined,
   ConfirmationNumberOutlined,
 } from "@mui/icons-material";
-import { CardMedia, Chip, Grid, Link } from "@mui/material";
+import { Box, Button, CardMedia, Chip, Grid, Link } from "@mui/material";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 
 import { AdminLayout } from "components/layouts";
@@ -70,6 +71,15 @@ const ProductsPage = () => {
       subTitle="Mantenimiento de Productos"
       icon={<CategoryOutlined />}
     >
+      <Box display="flex" justifyContent="end" sx={{ mb: 2 }}>
+        <Button
+          startIcon={<AddOutlined />}
+          color="secondary"
+          href="/admin/products/new"
+        >
+          Crear producto
+        </Button>
+      </Box>
       <Grid container className="fadeIn">
         <Grid item xs={12} sx={{ height: 650, width: "95%" }}>
           <DataGrid
