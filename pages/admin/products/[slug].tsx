@@ -142,13 +142,20 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     }
   };
 
-  const onFileChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+  const onFileChange = async ({ target }: ChangeEvent<HTMLInputElement>) => {
     if (!target.files || target.files.length === 0) return;
+
+    console.log("AQUI",target.files);
 
     try {
       for (const file of target.files) {
         const formData = new FormData();
-        console.log({ file });
+        formData.append("file", file);
+        const { data } = await shopApi.post<{ message: string }>(
+          "/admin/upload",
+          formData
+        );
+        console.log("DATA", { data });
       }
     } catch (err) {
       console.log(err);
